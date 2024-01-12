@@ -91,6 +91,10 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+app.post("/verifyToken", (req, res)=>{
+    
+});
+
 const port = 3000;
 server.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
