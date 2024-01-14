@@ -62,11 +62,11 @@ app.post("/signup", async (req, res) => {
   const input = req.body;
     let found = false;
     const value = await User.findOne({username : input.username})
-    console.log(input, value);
+    //console.log(input, value);
     if(value !== null){
       found = true;
     }
-    console.log(found);
+    //console.log(found);
     if(found === true){
       return res.status(400).json({message : "User Already exists"});
     }else{
@@ -85,7 +85,7 @@ app.post("/signup", async (req, res) => {
         password : input.password
       };
       const token = jwt.sign(obj, key);
-      console.log(token);
+      //console.log(token);
       return res.json({token : token})
     }
 });
@@ -94,7 +94,7 @@ app.post("/login", async (req, res) => {
   const input = req.body;
     let found = false;
     const value = await User.findOne({username : input.username})
-    console.log(input, value);
+    //console.log(input, value);
     if(value !== null){
       found = true;
     }
@@ -108,7 +108,7 @@ app.post("/login", async (req, res) => {
       };
       if(input.password === value.password){
         const token = jwt.sign(obj, key);
-        console.log(token);
+        //console.log(token);
         return res.json({token : token})
       }else{
         return res.status(404).json({msg : "Incorrect password!"})
@@ -118,7 +118,7 @@ app.post("/login", async (req, res) => {
 
 app.post("/verifyToken", (req, res)=>{
     const token = req.body.token;
-    console.log(req.body);
+    //console.log(req.body);
     try{
       const verifyToken = jwt.verify(token, key);
       return res.json({msg : "Success"});
