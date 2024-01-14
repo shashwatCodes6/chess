@@ -6,7 +6,6 @@ import http from "http";
 import { Server } from "socket.io";
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import { stringify } from 'querystring';
 const key = "mysecret";
 
 app.use(express.json());
@@ -99,7 +98,7 @@ app.post("/login", async (req, res) => {
     if(value !== null){
       found = true;
     }
-    console.log(found);
+    // console.log(found);
     if(found === false){
       return res.status(400).json({message : "User does not exists"});
     }else{
@@ -112,13 +111,14 @@ app.post("/login", async (req, res) => {
         console.log(token);
         return res.json({token : token})
       }else{
-        return res.status(402).json({msg : "Incorrect password!"})
+        return res.status(404).json({msg : "Incorrect password!"})
       }
     }
 });
 
 app.post("/verifyToken", (req, res)=>{
     const token = req.body.token;
+    console.log(req.body);
     try{
       const verifyToken = jwt.verify(token, key);
       return res.json({msg : "Success"});
