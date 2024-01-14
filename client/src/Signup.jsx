@@ -16,7 +16,7 @@ const schema = zod.object({
 
 
 const Signup = function(){
-    const[shouldRedirect, setRedirect] = useState(true);
+    const[shouldRedirect, setRedirect] = useState(false);
     var [name,setName] = useState()
     var [password, setPass] = useState()
     var [email, setEmail] = useState()
@@ -49,16 +49,16 @@ const Signup = function(){
                     return response.json();
                 }).then(data => {
                     console.log(data);
-                    // if(data.token)
-                    //     Cookies.set('token', data.token, { expires: 7 });
+                    if(data.token)
+                        Cookies.set('token', data.token, { expires: 7 });
                     setRedirect(true);
                 })
                 .catch(err => {
                     console.log(err);
                 })
         }
-        window.location.replace("http://localhost:5173/login");
-
+        if(shouldRedirect)
+            window.location.replace("http://localhost:5173/login");
     }
     return (
         <>
