@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import Cookies from 'js-cookie'
-import { redirect } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 
@@ -9,22 +9,33 @@ const Signin = function(){
     const [shouldRedirect, setRedirect] = useState(false);
     var [uname, setUname] = useState()
     var [password, setPass] = useState()
-    let [tokeninBrowser, setToken] = useState(null);
+    let [tokeninBrowser, setToken] = useState(Cookies.get());
+    const navigate = useNavigate();
+
+
     useEffect(() => {
-        setToken(Cookies.get().token);
+        setToken({token : Cookies.get().token});
+        if(tokeninBrowser.token !== "") {
+            fetch("http://localhost:3000/verifyToken", {
+                method : "POST", 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(tokeninBrowser),
+            })
+            .then((response) => {
+                return response.json();   
+            }).then((data) => {
+                console.log(data);
+                if(data.msg === "Success"){
+                    setRedirect(true);
+                }else{
+                    Cookies.set('token');
+                }
+            })
+        }
     }, [])
-    if(tokeninBrowser) {
-        fetch("http://localhost:3000/verifyToken")
-        .then((response) => {
-            return response.json();   
-        }).then((data) => {
-            if(data.message === "Success"){
-                setRedirect(true);
-            }else{
-                Cookies.remove('token');
-            }
-        })
-    }
+    
     function handleSubmit(){
         const obj = {
             password : password,
@@ -32,35 +43,36 @@ const Signin = function(){
         };
       //  console.log(obj);
         
-            fetch("http://localhost:3000/login", {
-                method : "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(obj),
+        fetch("http://localhost:3000/login", {
+            method : "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(obj),
+        })
+            .then(response =>{
+                if(response.status === 400){
+                    alert("User does not exist!");
+                }
+                return response.json();
+            }).then(data => {
+                if(data.token){
+                    console.log(data.token);
+                    Cookies.set('token', data.token, { expires : 7});
+                    setRedirect(true);
+                }else{
+                    alert(data.msg);
+                }
             })
-                .then(response =>{
-                    if(response.status === 400){
-                        alert("User does not exist!");
-                    }
-                    return response.json();
-                }).then(data => {
-                    console.log(data);
-                    if(data.token){
-                        Cookies.set('token', data.token, { expires: 7 });
-                        setRedirect(true);
-                    }else{
-                        alert(data.msg);
-                    }
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+            .catch(err => {
+                console.log(err);
+            })
     }
-    if(shouldRedirect){
-        window.location.replace("http://localhost:5173/roomGen");
-        return redirect("/roomGen");
-    }
+    useEffect(()=>{
+        if(shouldRedirect){
+            navigate("/roomGen");
+        }
+    }, [shouldRedirect]);
     return (
         <div>
             <input onChange = {e => setUname(e.target.value)} placeholder = "UserName" id = "username"></input><br></br>
