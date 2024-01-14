@@ -91,6 +91,42 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+app.post("/login", async (req, res) => {
+  const input = req.body;
+    let found = false;
+    const value = await User.findOne({username : input.username})
+    console.log(input, value);
+    if(value !== null){
+      found = true;
+    }
+    console.log(found);
+    if(found === false){
+      return res.status(400).json({message : "User does not exists"});
+    }else{
+      const obj = {
+        username : input.username,
+        password : input.password
+      };
+      if(input.password === value.password){
+        const token = jwt.sign(obj, key);
+        console.log(token);
+        return res.json({token : token})
+      }else{
+        return res.status(402).json({msg : "Incorrect password!"})
+      }
+    }
+});
+
+app.post("/verifyToken", (req, res)=>{
+    const token = req.body.token;
+    try{
+      const verifyToken = jwt.verify(token, key);
+      return res.json({msg : "Success"});
+    }catch(err){
+      return res.json({msg : "Invalid token"});
+    }
+});
+
 const port = 3000;
 server.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}`);
