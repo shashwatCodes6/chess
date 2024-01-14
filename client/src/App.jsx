@@ -6,6 +6,9 @@ import { DndProvider } from 'react-dnd'
 import { Game } from './Game';
 import { useParams } from "react-router-dom";
 import { socket } from './socket';
+import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom';
+
 
 
 const containerStyle = {
@@ -15,8 +18,35 @@ const containerStyle = {
 }
 
 function App() {
-  const roomID = useParams().roomID;
+  const roomID = useParams().roomID;  
+  const tokeninBrowser = Cookies.get();
   let [game, setGame] = useState(new Game());
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    if(!tokeninBrowser){
+      navigate("/login");
+    }
+    fetch("http://localhost:3000/verifyToken", {
+      method : "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tokeninBrowser),
+    }) 
+    .then((response) => {
+      return response.json();
+    }).then(data => {
+      if(data.msg === "Success"){
+        console.log(token);
+      }else{
+        alert("Not authenticated!!");
+        navigate("/login");
+      }
+    })
+  }, []);
+
   useEffect(() => {
     socket.emit("join-room", roomID);
     socket.on('roomCreated', (message) => {
