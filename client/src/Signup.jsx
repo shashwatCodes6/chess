@@ -3,7 +3,7 @@ import zod from 'zod'
 import { socket } from './socket';
 import { useState } from 'react'
 import Cookies from 'js-cookie'
-import { redirect } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 
 const schema = zod.object({
@@ -21,8 +21,10 @@ const Signup = function(){
     var [password, setPass] = useState()
     var [email, setEmail] = useState()
     var [uname, setUname] = useState()
+    const navigate = useNavigate();
+
+
     const handleSubmit = () => {
-        
         const obj = {
             name : name,
             password : password,
@@ -45,20 +47,21 @@ const Signup = function(){
                     if(response.status !== 200){
                         alert("User already exists!");
                     }
-                        //redirect("/login");
                     return response.json();
                 }).then(data => {
-                    console.log(data);
-                    if(data.token)
+                    //console.log( " data ", data);
+                    if(data.token){
                         Cookies.set('token', data.token, { expires: 7 });
-                    setRedirect(true);
+                        setRedirect(true);
+                    }
                 })
                 .catch(err => {
                     console.log(err);
                 })
         }
-        if(shouldRedirect)
-            window.location.replace("http://localhost:5173/login");
+        if(shouldRedirect){
+            navigate("/login");
+        }
     }
     return (
         <>
