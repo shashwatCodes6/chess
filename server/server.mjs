@@ -37,7 +37,10 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   //console.log(socket);
-  socket.on("join-room", roomID =>{
+  socket.on("join-room", obj => {
+    const roomID = obj.roomID;
+    const auth = obj.auth;
+    console.log(obj);
     const rooms = io.of("/").adapter.rooms;
     console.log(rooms);
     if(games.get(roomID) === undefined){
@@ -48,6 +51,7 @@ io.on('connection', (socket) => {
     else{
       io.to(roomID).emit('roomCreated', {message : "Exists", game : games[roomID]});
     }
+    
     socket.join(roomID); // logic to handle no of users!!
   }); 
   socket.on("leave-room", roomID =>{

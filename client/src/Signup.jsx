@@ -65,10 +65,10 @@ const Signup = function(){
     }
     return (
         <>
-            <input onChange = {e => {setName(e.target.value)}} placeholder = "Name" id = "name"></input><br></br>
-            <input onChange = {e => setEmail(e.target.value)} placeholder = "Email ID" id = "email" type = "email"></input><br></br>
-            <input onChange = {e => setUname(e.target.value)} placeholder = "User Name" id = "username"></input><br></br>
-            <input onChange = {e => setPass(e.target.value)} placeholder = "Password" id = "password"></input><br></br>
+            <input onChange = {e => {setName(e.target.value)}} placeholder = "Name" id = "name" required></input><br></br>
+            <input onChange = {e => setEmail(e.target.value)} placeholder = "Email ID" id = "email" type = "email" required></input><br></br>
+            <input onChange = {e => setUname(e.target.value)} placeholder = "User Name" id = "username" required></input><br></br>
+            <input onChange = {e => setPass(e.target.value)} placeholder = "Password" id = "password" required></input><br></br>
             <button type = "submit" onClick = {handleSubmit}>Submit</button>
         </>    
     );
