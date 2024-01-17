@@ -39,22 +39,21 @@ function App() {
       return response.json();
     }).then(data => {
       if(data.msg === "Success"){
-        console.log(token);
+        console.log(data);
       }else{
         alert("Not authenticated!!");
         navigate("/login");
       }
     })
-  }, []);
-
-  useEffect(() => {
-    socket.emit("join-room", roomID);
+    socket.emit("join-room", {roomID : roomID, auth : Cookies.get().token});
     socket.on('roomCreated', (message) => {
+      console.log(message);
         if(message.message === "ok"){
           //game = new Game();
           socket.emit("newGame", {game, roomID});
         }else if(message.message === "Exists"){
-          setGame(message.game);
+          //setGame(message.game);
+          alert("damn");
         }
     });
   },[]);

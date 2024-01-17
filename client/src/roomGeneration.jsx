@@ -24,7 +24,7 @@ function RoomGen() {
       return response.json();
     }).then(data => {
       if(data.msg === "Success"){
-        console.log(token);
+        console.log(data);
       }else{
         alert("Not authenticated!!");
         navigate("/login");
@@ -39,9 +39,9 @@ function RoomGen() {
     let counter = 0;
     while (counter < length) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
+      counter++;
     }
-    socket.emit("join-room", result);
+  //  socket.emit("join-room", result);
     const roomLink = window.location.origin + '/join/' + result;
     setVal(result);
     setLink(roomLink);
@@ -52,7 +52,7 @@ function RoomGen() {
         <h1>Room</h1>
       <input id="roomID" placeholder="Your Room ID" value = {value} /> <br></br>
       <button onClick={makeid}>Generate Room!</button><br></br>
-      <a href = {link} > { link } </a>
+      <a href = {link}> { link } </a>
     </div>
   );
 }
