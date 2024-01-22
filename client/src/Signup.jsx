@@ -52,6 +52,7 @@ const Signup = function(){
                     //console.log( " data ", data);
                     if(data.token){
                         Cookies.set('token', data.token, { expires: 7 });
+                        Cookies.set('username', uname, { expires: 7 });
                         setRedirect(true);
                     }
                 })

@@ -6,6 +6,7 @@ const Piece = ({pid}) => {
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: "piece",
+      item: {id : pid},
       collect: (monitor) => ({
         isDragging: !!monitor.isDragging(),
       }),

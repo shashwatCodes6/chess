@@ -31,6 +31,7 @@ const Signin = function(){
                     setRedirect(true);
                 }else{
                     Cookies.set('token');
+                    Cookies.set('username');
                 }
             })
         }
@@ -59,6 +60,7 @@ const Signin = function(){
                 if(data.token){
                     console.log(data.token);
                     Cookies.set('token', data.token, { expires : 7 });
+                    Cookies.set('username', uname, { expires : 7 });
                     setRedirect(true);
                 }else{
                     alert(data.msg);

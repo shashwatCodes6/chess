@@ -11,6 +11,7 @@ const key = "mysecret";
 app.use(express.json());
 app.use(cors());
 const db = mongoose.connect("mongodb+srv://shashwat123:shashwat123@cluster0.qkxrwkq.mongodb.net/");
+
 const UserSchema = new mongoose.Schema({
   email : String,
   name : String,
@@ -18,11 +19,18 @@ const UserSchema = new mongoose.Schema({
   username : String,
 });
 
+const GameSchema = new mongoose.Schema({
+  roomID : String,
+  game : Object,  
+});
+ 
 
 const User = mongoose.model('User', UserSchema);
+const Game = mongoose.model('Game', GameSchema);
 
-var games = new Map();
-var boards = {};
+let games = new Map();
+let rmap = new Map();
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -37,29 +45,64 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   //console.log(socket);
-  socket.on("join-room", obj => {
+  socket.on("join-room", async obj => {
     const roomID = obj.roomID;
     const auth = obj.auth;
     console.log(obj);
     const rooms = io.of("/").adapter.rooms;
-    console.log(rooms);
-    if(games.get(roomID) === undefined){
+   // console.log(games[roomID]);
+    if(games[roomID] === undefined){
       const gameClient = chess.create({ PGN : true });
+     // console.log(gameClient);
       games[roomID] = gameClient;
+     // console.log("yoooo");
+      socket.join(roomID); 
       io.to(roomID).emit('roomCreated', {message : "ok"});
     }
     else{
-      io.to(roomID).emit('roomCreated', {message : "Exists", game : games[roomID]});
+   //   console.log("yaha sab theek hai")
+      socket.join(roomID); 
+      const gameforRoomID = await Game.findOne({roomID : roomID});
+      console.log(gameforRoomID);
+      io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game});
     }
-    
-    socket.join(roomID); // logic to handle no of users!!
   }); 
+
+  // app.jsx
+  socket.on("newGame", async obj => {
+    //console.log(obj);
+    const roomID = obj.roomID;
+    const game = obj.game;
+    const flag = obj.fl;
+    if(flag === true){
+      await Game.deleteOne({roomID : roomID}).then((res) => {});
+    }
+    const gameforRoomID = new Game({
+      roomID : roomID,
+      game : game
+    });
+    await gameforRoomID.save();
+    io.to(roomID).emit("gameCreated", {game : game});
+  });
+
+
+
+  // square.jsx
+  socket.on("checkMove", obj => {
+    const roomID = obj.roomID;
+    const from = obj.from;
+    const to = obj.to;
+    const game = games[roomID];
+    const move = game.move({from : from, to : to});
+    if(move !== null){
+      io.to(roomID).emit("move", {from : from, to : to});
+    } 
+  }); 
+
+
   socket.on("leave-room", roomID =>{
     games.erase(roomID)// = undefined;
   });
-
-  
-
 });
 
 app.post("/signup", async (req, res) => {

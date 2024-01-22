@@ -1,6 +1,6 @@
 import React from 'react';
 import {useEffect, useState} from 'react'
-import Chessboard from './Chessboard';
+import Chessboard from './ChessBoard';
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DndProvider } from 'react-dnd'
 import { Game } from './Game';
@@ -20,9 +20,10 @@ const containerStyle = {
 function App() {
   const roomID = useParams().roomID;  
   const tokeninBrowser = Cookies.get();
-  let [game, setGame] = useState(new Game());
+  const username = Cookies.get().username;
   const navigate = useNavigate();
-
+  let [game, setGame] = useState();
+  let [found, setFound] = useState(false);
 
   useEffect(() => {
     if(!tokeninBrowser){
@@ -45,19 +46,54 @@ function App() {
         navigate("/login");
       }
     })
-    socket.emit("join-room", {roomID : roomID, auth : Cookies.get().token});
-    socket.on('roomCreated', (message) => {
-      console.log(message);
+
+    socket.emit("join-room", {roomID : roomID, auth : Cookies.get().username});
+
+    socket.on('roomCreated', async (message) => {
+        console.log("Message", message);
+
+
         if(message.message === "ok"){
-          //game = new Game();
-          socket.emit("newGame", {game, roomID});
-        }else if(message.message === "Exists"){
-          //setGame(message.game);
+          game = new Game();
+          //setGame(new Game());
+          game.setRoomID(roomID);
+          const color = Math.random() > 0.5 ? "white" : "black";
+          if(color === "white"){
+            game.playerWhite = username;
+          }else{
+            game.playerBlack = username;
+          }
+          console.log(game);
+          socket.emit("newGame", {game : game, roomID : roomID, fl : false});
+        }
+        
+        else if(message.message === "Exists"){
+          setFound(true);
+          if(message.game.playerBlack === null && message.game.playerWhite !== username){
+            message.game.playerBlack = username;
+            socket.emit("newGame", {game : message.game, roomID : roomID, fl : true});
+          }else if(message.game.playerWhite === null && message.game.playerBlack !== username){
+            message.game.playerWhite = username;
+            socket.emit("newGame", {game : message.game, roomID : roomID, fl : true});
+          }
+          setGame(message.game);
           alert("damn");
         }
     });
-  },[]);
 
+    socket.on("gameCreated", async (message) => {
+      console.log(message);
+      setGame(message.game);
+    });
+
+  },[]);
+  if(found === false){
+    return (
+      <div>
+        <h1>Waiting for other player to join!</h1>
+      </div>
+    );
+  }
   return (
     <DndProvider backend={HTML5Backend}>
       <div style = {containerStyle}>
