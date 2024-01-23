@@ -57,7 +57,7 @@ function App() {
           game = new Game();
           //setGame(new Game());
           game.setRoomID(roomID);
-          const color = Math.random() > 0.5 ? "white" : "black";
+          const color = (Math.random() >= 0.5) ? "white" : "black";
           if(color === "white"){
             game.playerWhite = username;
           }else{
@@ -82,8 +82,16 @@ function App() {
     });
 
     socket.on("gameCreated", async (message) => {
-      console.log(message);
-      setGame(message.game);
+      console.log("Message!!!", message.game);
+      game = message.game;
+      console.log(game);
+    });
+
+    socket.on("move", async (move) => {
+      game.turn = 1 - game.turn;
+      game.chess_board[move.to.x][move.to.y] = game.chess_board[move.from.x][move.from.y];
+      game.chess_board[move.from.x][move.from.y] = '-';
+      console.log("Game!!!", game);
     });
 
   },[]);

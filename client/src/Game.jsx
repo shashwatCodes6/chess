@@ -14,6 +14,7 @@ export class Game{
     ['w_p11', 'w_p12', 'w_p13', 'w_p14', 'w_p15', 'w_p16', 'w_p17', 'w_p18'],
     ['w_r1', 'w_n2', 'w_b3', 'w_q4', 'w_k5', 'w_b6', 'w_n7', 'w_r8']
   ];
+  
   turn = 0;
   playerBlack = null;
   playerWhite = null;
@@ -28,7 +29,8 @@ export class Game{
 
   }
   playMove(move){
-
+    this.chess_board[move.to.x][move.to.y] = this.chess_board[move.from.x][move.from.y];
+    this.chess_board[move.from.x][move.from.y] = '-';
   }
   isOver(){
 

@@ -15,6 +15,9 @@ const Chessboard = ({game}) => {
   console.log("chess_board", game);
   let [board, setBoard] = useState(game.chess_board);
   //useEffect(() => game.observe(setBoard));
+  useEffect(() => {
+    setBoard(game.chess_board);
+  }, [game]);
   function renderSquare(i){
     const x = i%8;
     const y = Math.floor(i/8);

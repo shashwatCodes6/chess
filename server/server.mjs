@@ -8,6 +8,28 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 const key = "mysecret";
 
+const x_map = {
+  0 : "a",
+  1 : "b",
+  2 : "c",
+  3 : "d",
+  4 : "e",
+  5 : "f",
+  6 : "g",
+  7 : "h",
+}; 
+
+const y_map = {
+  0 : "8",
+  1 : "7",
+  2 : "6",
+  3 : "5",
+  4 : "4",
+  5 : "3",
+  6 : "2",
+  7 : "1",
+};
+
 app.use(express.json());
 app.use(cors());
 const db = mongoose.connect("mongodb+srv://shashwat123:shashwat123@cluster0.qkxrwkq.mongodb.net/");
@@ -63,7 +85,7 @@ io.on('connection', (socket) => {
    //   console.log("yaha sab theek hai")
       socket.join(roomID); 
       const gameforRoomID = await Game.findOne({roomID : roomID});
-      console.log(gameforRoomID);
+     // console.log(gameforRoomID);
       io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game});
     }
   }); 
@@ -90,13 +112,25 @@ io.on('connection', (socket) => {
   // square.jsx
   socket.on("checkMove", obj => {
     const roomID = obj.roomID;
-    const from = obj.from;
-    const to = obj.to;
-    const game = games[roomID];
-    const move = game.move({from : from, to : to});
-    if(move !== null){
-      io.to(roomID).emit("move", {from : from, to : to});
-    } 
+    const from = String(x_map[obj.from.y]) + String(y_map[obj.from.x]);
+    const to = String(x_map[obj.to.y]) + String(y_map[obj.to.x]);
+    const gameClient = games[roomID];
+    const status = gameClient.getStatus();
+    //checkmate , stalemate ka logic baaki hai sir
+    console.log(from, to);
+    Object.entries(status.notatedMoves).forEach(([key, move]) => {
+    //  console.log(key, move);
+      if(move.src.file === from[0] && String(move.src.rank) === from[1] && move.dest.file === to[0] && String(move.dest.rank) === to[1]){
+        console.log("yoooo");
+        gameClient.move(key);
+        io.to(roomID).emit("move", {from : obj.from, to : obj.to});
+      }
+    });
+    console.log(obj);
+    // const move = game.move({from : from, to : to});
+    // if(move !== null){
+    //   io.to(roomID).emit("move", {from : from, to : to});
+    // } 
   }); 
 
 
