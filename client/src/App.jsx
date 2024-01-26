@@ -55,7 +55,6 @@ function App() {
 
         if(message.message === "ok"){
           game = new Game();
-          //setGame(new Game());
           game.setRoomID(roomID);
           const color = (Math.random() >= 0.5) ? "white" : "black";
           if(color === "white"){
@@ -64,6 +63,7 @@ function App() {
             game.playerBlack = username;
           }
           console.log(game);
+          setGame(game);
           socket.emit("newGame", {game : game, roomID : roomID, fl : false});
         }
         
@@ -76,8 +76,9 @@ function App() {
             message.game.playerWhite = username;
             socket.emit("newGame", {game : message.game, roomID : roomID, fl : true});
           }
+          game = message.game;
           setGame(message.game);
-          alert("damn");
+       //   alert("damn");
         }
     });
 
@@ -87,14 +88,16 @@ function App() {
       console.log(game);
     });
 
-    socket.on("move", async (move) => {
+    socket.on("move", (move) => {
       game.turn = 1 - game.turn;
       game.chess_board[move.to.x][move.to.y] = game.chess_board[move.from.x][move.from.y];
       game.chess_board[move.from.x][move.from.y] = '-';
-      console.log("Game!!!", game);
+      console.log("MOVE!!!", game);
+      setGame(game);
     });
+  }, []);
 
-  },[]);
+
   if(found === false){
     return (
       <div>

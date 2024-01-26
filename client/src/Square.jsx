@@ -9,17 +9,23 @@ import { useCallback, useEffect, useState } from 'react';
 
 
 function Square({ black, children, game, x, y }) {
-  const [game1, setGame] = useState(game);
-  useEffect(() => setGame(game), [game]);
-    const getCoordinates = useCallback((pid) => {
-      for(let i = 0; i < 8; i++){
-        for(let j = 0; j < 8; j++){
-          if(game.chess_board[i][j] === pid){
-            return [i, j];
-          }
+  let [game1, setGame] = useState(game);
+  useEffect(() => {
+    console.log("aa gaya bhaiya yaha");
+    game1 = game; 
+    setGame(game)
+  }
+  , [game1]);
+
+  const getCoordinates = useCallback((pid) => {
+    for(let i = 0; i < 8; i++){
+      for(let j = 0; j < 8; j++){
+        if(game.chess_board[i][j] === pid){
+          return [i, j];
         }
       }
-    }, []);
+    }
+  }, []);
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept : "piece",
@@ -37,13 +43,13 @@ function Square({ black, children, game, x, y }) {
         console.log('Dropped item:', item);
         console.log('Client offset:', clientOffset);
         const username = Cookies.get().username;
-        console.log(username, game.turn, game.playerBlack);
+        console.log(username, game1.turn, game.playerBlack);
         if((game.turn === 0 && username === game.playerWhite) || 
         (game.turn === 1 && username === game.playerBlack)){
           const coordinates = getCoordinates(item.id);
           socket.emit("checkMove", {
             from : {x : coordinates[0], y : coordinates[1]}, 
-            to : {x : Math.floor(x / (62.5)), y : Math.floor(y / (62.5))}, 
+            to : {x : Math.floor(y / (62.5)), y : Math.floor(x / (62.5))}, 
             username : username, 
             roomID : game.roomID
           });
@@ -55,7 +61,7 @@ function Square({ black, children, game, x, y }) {
         canDrop: !!monitor.canDrop(),
       }),
     }),
-    [game],
+    [game1],
   )
   return (
     <div

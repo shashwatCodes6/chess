@@ -123,7 +123,7 @@ io.on('connection', (socket) => {
       if(move.src.file === from[0] && String(move.src.rank) === from[1] && move.dest.file === to[0] && String(move.dest.rank) === to[1]){
         console.log("yoooo");
         gameClient.move(key);
-        io.to(roomID).emit("move", {from : obj.from, to : obj.to});
+        io.to(roomID).emit("move", {from : obj.from, to : obj.to, board : games[roomID].game.board.squares});
       }
     });
     console.log(obj);
