@@ -13,19 +13,11 @@ function Square({ black, children, game, x, y }) {
   useEffect(() => {
     console.log("aa gaya bhaiya yaha");
     game1 = game; 
-    setGame(game)
+    setGame(game1)
   }
   , [game1]);
 
-  const getCoordinates = useCallback((pid) => {
-    for(let i = 0; i < 8; i++){
-      for(let j = 0; j < 8; j++){
-        if(game.chess_board[i][j] === pid){
-          return [i, j];
-        }
-      }
-    }
-  }, []);
+  
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept : "piece",
@@ -46,6 +38,15 @@ function Square({ black, children, game, x, y }) {
         console.log(username, game1.turn, game.playerBlack);
         if((game.turn === 0 && username === game.playerWhite) || 
         (game.turn === 1 && username === game.playerBlack)){
+          const getCoordinates = (pid) => {
+            for(let i = 0; i < 8; i++){
+              for(let j = 0; j < 8; j++){
+                if(game.chess_board[i][j] === pid){
+                  return [i, j];
+                }
+              }
+            }
+          }
           const coordinates = getCoordinates(item.id);
           socket.emit("checkMove", {
             from : {x : coordinates[0], y : coordinates[1]}, 

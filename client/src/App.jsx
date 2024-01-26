@@ -47,6 +47,31 @@ function App() {
       }
     })
 
+    function decryptBoard(squares){
+      let ans = [
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+        ['-', '-', '-', '-', '-', '-', '-', '-'],
+      ];
+      for(let i = 0; i < 64; i++){
+        if(squares[i].piece !== null){
+            const color = squares[i].piece.side.name[0];
+            let piece = squares[i].piece.notation.toLowerCase()[0];
+            //console.log(color, piece);
+            if(piece === undefined){
+                piece = 'p';
+            }
+            ans[7 - Math.floor(i / 8)][i % 8] = (color + "_" + piece + String(squares[i].file) + String(squares[i].rank));
+        }
+      }
+      return ans;
+    }
+
     socket.emit("join-room", {roomID : roomID, auth : Cookies.get().username});
 
     socket.on('roomCreated', async (message) => {
@@ -68,7 +93,10 @@ function App() {
         }
         
         else if(message.message === "Exists"){
-          setFound(true);
+          if((message.game.playerBlack === username && message.game.playerWhite === null) || 
+          (message.game.playerBlack === null && message.game.playerWhite === username)){
+            setFound(false);
+          }else setFound(true);
           if(message.game.playerBlack === null && message.game.playerWhite !== username){
             message.game.playerBlack = username;
             socket.emit("newGame", {game : message.game, roomID : roomID, fl : true});
@@ -76,24 +104,36 @@ function App() {
             message.game.playerWhite = username;
             socket.emit("newGame", {game : message.game, roomID : roomID, fl : true});
           }
+          const sq = decryptBoard(message.board);
           game = message.game;
-          setGame(message.game);
+          game.chess_board = sq;
+          setGame(game);
        //   alert("damn");
         }
     });
 
-    socket.on("gameCreated", async (message) => {
-      console.log("Message!!!", message.game);
+    socket.on("gameCreated", (message) => {
+      console.log("Message!!!", message);
+      const sq = decryptBoard(message.board);
       game = message.game;
+      game.chess_board = sq;
+      setGame(game);
       console.log(game);
     });
 
     socket.on("move", (move) => {
-      game.turn = 1 - game.turn;
-      game.chess_board[move.to.x][move.to.y] = game.chess_board[move.from.x][move.from.y];
-      game.chess_board[move.from.x][move.from.y] = '-';
-      console.log("MOVE!!!", game);
-      setGame(game);
+      // game.turn = 1 - game.turn;
+      // const sq = decryptBoard(move.board);
+      // game.chess_board = sq;
+      // console.log("MOVE!!!", game);
+      // setGame(game);
+      const sq = decryptBoard(move.board);
+      setGame(prevGame => ({
+        ...prevGame,
+        turn: 1 - prevGame.turn,
+        chess_board: sq,
+      }));
+      console.log(game);
     });
   }, []);
 

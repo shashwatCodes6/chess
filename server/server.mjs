@@ -86,7 +86,7 @@ io.on('connection', (socket) => {
       socket.join(roomID); 
       const gameforRoomID = await Game.findOne({roomID : roomID});
      // console.log(gameforRoomID);
-      io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game});
+      io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game, board : games[roomID].game.board.squares});
     }
   }); 
 
@@ -104,7 +104,7 @@ io.on('connection', (socket) => {
       game : game
     });
     await gameforRoomID.save();
-    io.to(roomID).emit("gameCreated", {game : game});
+    io.to(roomID).emit("gameCreated", {game : game, board : games[roomID].game.board.squares });
   });
 
 
@@ -127,10 +127,6 @@ io.on('connection', (socket) => {
       }
     });
     console.log(obj);
-    // const move = game.move({from : from, to : to});
-    // if(move !== null){
-    //   io.to(roomID).emit("move", {from : from, to : to});
-    // } 
   }); 
 
 
