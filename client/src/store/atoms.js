@@ -1,9 +1,9 @@
-import {atoms, selector, selectorFamily} from 'recoil';
+import {atomFamily, atoms, selector, selectorFamily} from 'recoil';
 
-export const game = selectorFamily({
-    key: 'game',
+export const game = atomFamily({
+    key: 'gameDetails',
     get: (roomID) => async ({get}) => {
-        const response = await fetch(`http://localhost:3000/game/${roomID}`);
+        
         const data = await response.json();
         return data;
     },

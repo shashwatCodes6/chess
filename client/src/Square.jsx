@@ -36,25 +36,15 @@ function Square({ black, children, game, x, y }) {
         console.log('Client offset:', clientOffset);
         const username = Cookies.get().username;
         console.log(username, game1.turn, game.playerBlack);
-        if((game.turn === 0 && username === game.playerWhite) || 
-        (game.turn === 1 && username === game.playerBlack)){
-          const getCoordinates = (pid) => {
-            for(let i = 0; i < 8; i++){
-              for(let j = 0; j < 8; j++){
-                if(game.chess_board[i][j] === pid){
-                  return [i, j];
-                }
-              }
-            }
-          }
-          const coordinates = getCoordinates(item.id);
+        // if((game.turn === 0 && username === game.playerWhite) || 
+        // (game.turn === 1 && username === game.playerBlack)){
           socket.emit("checkMove", {
-            from : {x : coordinates[0], y : coordinates[1]}, 
+            from : {x : item.id[3], y : item.id[4]}, 
             to : {x : Math.floor(y / (62.5)), y : Math.floor(x / (62.5))}, 
             username : username, 
             roomID : game.roomID
           });
-        }
+       // }
        // return { name: `Square ${x} ${y}` };
       },
       collect: monitor => ({

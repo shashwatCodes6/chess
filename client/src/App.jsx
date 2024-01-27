@@ -135,6 +135,17 @@ function App() {
       }));
       console.log(game);
     });
+
+    socket.on("gameEnded", obj => {
+      if(obj.result === "Win"){
+        alert("Game Ended! Winner is " + obj.winner);
+      }else{
+        alert("Game Ended! It's a draw!");
+      }
+      socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
+      navigate("/roomGen");
+    });
+
   }, []);
 
 

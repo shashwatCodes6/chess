@@ -77,6 +77,11 @@ io.on('connection', (socket) => {
       const gameClient = chess.create({ PGN : true });
      // console.log(gameClient);
       games[roomID] = gameClient;
+      rmap[roomID] = {
+        playerWhite : null,
+        playerBlack : null,
+        turn : 0
+      };
      // console.log("yoooo");
       socket.join(roomID); 
       io.to(roomID).emit('roomCreated', {message : "ok"});
@@ -86,6 +91,11 @@ io.on('connection', (socket) => {
       socket.join(roomID); 
       const gameforRoomID = await Game.findOne({roomID : roomID});
      // console.log(gameforRoomID);
+     rmap[roomID] = {
+      playerWhite : gameforRoomID.game.playerWhite,
+      playerBlack : gameforRoomID.game.playerBlack,
+      turn : gameforRoomID.game.turn
+     };
       io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game, board : games[roomID].game.board.squares});
     }
   }); 
@@ -112,26 +122,39 @@ io.on('connection', (socket) => {
   // square.jsx
   socket.on("checkMove", obj => {
     const roomID = obj.roomID;
-    const from = String(x_map[obj.from.y]) + String(y_map[obj.from.x]);
+   // const from = String(x_map[obj.from.y]) + String(y_map[obj.from.x]);
+    const from = obj.from.x  + obj.from.y; 
     const to = String(x_map[obj.to.y]) + String(y_map[obj.to.x]);
     const gameClient = games[roomID];
     const status = gameClient.getStatus();
     //checkmate , stalemate ka logic baaki hai sir
-    console.log(from, to);
-    Object.entries(status.notatedMoves).forEach(([key, move]) => {
-    //  console.log(key, move);
-      if(move.src.file === from[0] && String(move.src.rank) === from[1] && move.dest.file === to[0] && String(move.dest.rank) === to[1]){
-        console.log("yoooo");
-        gameClient.move(key);
-        io.to(roomID).emit("move", {from : obj.from, to : obj.to, board : games[roomID].game.board.squares});
-      }
-    });
+    if((rmap[roomID].turn === 0 && obj.username === rmap[roomID].playerWhite) || 
+    (rmap[roomID].turn === 1 && obj.username === rmap[roomID].playerBlack)){
+      console.log(from, to);
+      Object.entries(status.notatedMoves).forEach(([key, move]) => {
+      //  console.log(key, move);
+        if(move.src.file === from[0] && String(move.src.rank) === from[1] && move.dest.file === to[0] && String(move.dest.rank) === to[1]){
+          console.log("yoooo");
+          gameClient.move(key);
+          rmap[roomID].turn = 1 - rmap[roomID].turn;
+          io.to(roomID).emit("move", {from : obj.from, to : obj.to, board : games[roomID].game.board.squares});
+        }
+      });
+    }
+    if(gameClient.getStatus().isCheckmate === true){
+      io.to(roomID).emit("gameEnded", {result : "Win" ,winner : obj.username});
+    }else if(gameClient.getStatus().isStalemate === true || gameClient.getStatus().isRepetition === true){
+      io.to(roomID).emit("gameEnded", {winner : obj.username, result : "Draw"});
+    }
     console.log(obj);
   }); 
 
 
-  socket.on("leave-room", roomID =>{
-    games.erase(roomID)// = undefined;
+  socket.on("leave-room", async obj =>{
+    games.erase(obj.roomID);
+    await Game.deleteOne({roomID : obj.roomID}).then((res) => {});
+    rmap.erase(obj.roomID);
+    socket.erase(obj.roomID);
   });
 });
 
