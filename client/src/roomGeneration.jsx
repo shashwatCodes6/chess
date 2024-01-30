@@ -48,11 +48,17 @@ function RoomGen() {
   }, []); // Empty dependency array means the function is only created once.
   
   return (
-    <div>
-        <h1>Room</h1>
+    <div className="row ">
+    <div className="col col-4"></div>
+    <div className="col col-4 flex justify-content-center align-items-center" >
+
+      <h1>Room</h1>
       <input id="roomID" placeholder="Your Room ID" value = {value} /> <br></br>
-      <button onClick={makeid}>Generate Room!</button><br></br>
+      <button type="button" className="btn btn-dark m-4" onClick={makeid}>Generate Room!</button><br></br>
       <a href = {link}> { link } </a>
+    </div>
+    <div className="col col-4"></div>
+
     </div>
   );
 }

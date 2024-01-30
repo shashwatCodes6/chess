@@ -8,8 +8,7 @@ import { useParams } from "react-router-dom";
 import { socket } from './socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
-
-
+import './App.css'
 
 const containerStyle = {
   width: 500,
@@ -122,11 +121,6 @@ function App() {
     });
 
     socket.on("move", (move) => {
-      // game.turn = 1 - game.turn;
-      // const sq = decryptBoard(move.board);
-      // game.chess_board = sq;
-      // console.log("MOVE!!!", game);
-      // setGame(game);
       const sq = decryptBoard(move.board);
       setGame(prevGame => ({
         ...prevGame,
@@ -151,17 +145,35 @@ function App() {
 
   if(found === false){
     return (
-      <div>
-        <h1>Waiting for other player to join!</h1>
+      <div className='' style = {{textAlign : "center", margin : "auto"}}>
+        <h1>
+          Waiting for opponent to join...
+        </h1>
       </div>
     );
   }
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div style = {containerStyle}>
-        <Chessboard game = {game} />
+    <div className='row'>
+      <div className='col col-3'>
+        <h2>
+          {game ? game.playerWhite : null}
+        </h2>
+
+        <h2>
+          {game ? game.playerBlack : null}
+        </h2>
       </div>
-    </DndProvider>
+      <div className='col col-4'>
+      <DndProvider backend={HTML5Backend}>
+        <div style = {containerStyle} id='board'>
+          <Chessboard game = {game} />
+        </div>
+      </DndProvider>
+      </div>
+      <div>
+        
+      </div>
+    </div>
   );
 }
 
