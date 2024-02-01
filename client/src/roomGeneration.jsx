@@ -3,6 +3,7 @@ import { socket } from './socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
 
+
 function RoomGen() {
   const [value, setVal] = useState('');
   const [link, setLink] = useState('');
@@ -48,17 +49,18 @@ function RoomGen() {
   }, []); // Empty dependency array means the function is only created once.
   
   return (
-    <div className="row ">
-    <div className="col col-4"></div>
-    <div className="col col-4 flex justify-content-center align-items-center" >
+    <div className="bg-gray-800 text-white p-5">
+    <div className="grid grid-cols-3">
+    <div className="col-span-1"></div>
+    <div className="col-span-1 flex flex-col items-center justify-center" >
 
-      <h1>Room</h1>
-      <input id="roomID" placeholder="Your Room ID" value = {value} /> <br></br>
-      <button type="button" className="btn btn-dark m-4" onClick={makeid}>Generate Room!</button><br></br>
-      <a href = {link}> { link } </a>
+      <h1 className="text-5xl font-bold text-center p-10">Room</h1>
+      <input className = "border border-gray-100 p-2 text-black" id="roomID" placeholder="Your Room ID" value = {value} /> <br></br>
+      <button className = "border border-gray-100 p-2 hover:bg-gray-400" type="button"  onClick={makeid}>Generate Room!</button><br></br>
+      <a className = "text-blue-400 p-5" href = {link}> { link } </a>
     </div>
-    <div className="col col-4"></div>
-
+    <div className="col-span-2"></div>
+    </div>
     </div>
   );
 }

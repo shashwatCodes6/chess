@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { socket } from './socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
-import './App.css'
+
 
 const containerStyle = {
   width: 500,
@@ -95,6 +95,7 @@ function App() {
           if((message.game.playerBlack === username && message.game.playerWhite === null) || 
           (message.game.playerBlack === null && message.game.playerWhite === username)){
             setFound(false);
+            console.log("found!!!");
           }else setFound(true);
           if(message.game.playerBlack === null && message.game.playerWhite !== username){
             message.game.playerBlack = username;
@@ -114,9 +115,16 @@ function App() {
     socket.on("gameCreated", (message) => {
       console.log("Message!!!", message);
       const sq = decryptBoard(message.board);
-      game = message.game;
-      game.chess_board = sq;
-      setGame(game);
+      //game.chess_board = sq;
+      setGame(prevGame => ({
+        ...prevGame,
+        playerBlack : message.game.playerBlack,
+        playerWhite : message.game.playerWhite,
+        chess_board: sq,
+      }));
+      if(message.game.playerBlack && message.game.playerWhite){
+        setFound(true);
+      }
       console.log(game);
     });
 
@@ -140,38 +148,57 @@ function App() {
       navigate("/roomGen");
     });
 
-  }, []);
+    function gameCancelled() {
+      socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
+      navigate("/roomGen");
+    }
+}, []);
 
 
   if(found === false){
     return (
-      <div className='' style = {{textAlign : "center", margin : "auto"}}>
-        <h1>
-          Waiting for opponent to join...
-        </h1>
+      <div className="grid grid-cols-3">
+        <div className="col-span-1"></div>
+        <div className="col-span-1 flex flex-col items-center justify-center" >
+          <h1 className="text-3xl font-bold text-center p-10">Waiting for opponent....</h1>
+          <button onClick = {() => {
+            socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
+            navigate("/roomGen");
+          }}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          </button>
+        </div>
+        <div className="col-span-2"></div>
+  
       </div>
     );
   }
   return (
-    <div className='row'>
-      <div className='col col-3'>
-        <h2>
+    <div className="bg-gray-800 text-white p-10">
+    <div className='grid grid-cols-3'>
+      <div className='grid-span-1'>
+
+        <h2 className='text-3xl'>
+          {game ? game.playerBlack : null}
+        </h2>
+
+        <h2 className='text-3xl'>
           {game ? game.playerWhite : null}
         </h2>
 
-        <h2>
-          {game ? game.playerBlack : null}
-        </h2>
       </div>
-      <div className='col col-4'>
+      <div className='grid-span-1'>
       <DndProvider backend={HTML5Backend}>
         <div style = {containerStyle} id='board'>
           <Chessboard game = {game} />
         </div>
       </DndProvider>
       </div>
-      <div>
+      <div className='grid-span-1'>
         
+      </div>
       </div>
     </div>
   );
