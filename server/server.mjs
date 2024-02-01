@@ -151,10 +151,14 @@ io.on('connection', (socket) => {
 
 
   socket.on("leave-room", async obj =>{
-    games.erase(obj.roomID);
+    if(games[obj.roomID] !== undefined){
+      delete games[obj.roomID];
+      delete rmap[obj.roomID];
+      delete socket[obj.roomID];
+      delete io.of("/").adapter.rooms[obj.roomID]
+    }      
     await Game.deleteOne({roomID : obj.roomID}).then((res) => {});
-    rmap.erase(obj.roomID);
-    socket.erase(obj.roomID);
+  //  console.log("deleted",io.of("/").adapter.rooms, games);
   });
 });
 
