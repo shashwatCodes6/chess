@@ -9,6 +9,7 @@ function RoomGen() {
   const [value, setVal] = useState('');
   const [link, setLink] = useState('');
   const [timer, setTimer] = useState(0);
+  const [inc, setInc] = useState(0);
   const tokeninBrowser = Cookies.get();
   const navigate = useNavigate();
 
@@ -59,19 +60,27 @@ function RoomGen() {
       <input className = "border border-gray-100 p-2 text-black" id="roomID" placeholder="Your Room ID" value = {value} /> <br></br>
     
       
-        <select className = "border border-gray-100 p-2 text-black" id="cars">
-          <option>1</option>
-          <option>2</option>
-          <option>5</option>
-          <option>10</option>
+        <select className = "border border-gray-100 p-2 text-black" id="time" value={timer} onChange={e => {setTimer(parseInt(e.target.value));}}>
+          <option id = "1">1</option>
+          <option id = "2">2</option>
+          <option id = "5">5</option>
+          <option id = "10">10</option>
         </select>
-        <select className = "border border-gray-100 p-2 text-black" id="cars">
-          <option>1</option>
-          <option>2</option>
-          <option>5</option>
-          <option>10</option>
+        <select className = "border border-gray-100 p-2 text-black" id="increment" value={inc} onChange={e => setInc(parseInt(e.target.value))}>
+          <option id = "1">1</option>
+          <option id = "2">2</option>
+          <option id = "5">5</option>
         </select>
-      <button className = "border border-gray-100 p-2 hover:bg-gray-400" type="button"  onClick={makeid}>Generate Room!</button><br></br>
+      <button className = "border border-gray-100 p-2 hover:bg-gray-400" type="button"  onClick={async ()=>{
+        makeid();
+        socket.emit("createRoom", {
+          roomID : value,
+          timingControls : {
+            time : timer,
+            inc : inc
+          }
+        });
+      }}>Generate Room!</button><br></br>
       <a className = "text-blue-400 p-5" href = {link}> { link } </a>
     </div>
     <div className="col-span-2"></div>

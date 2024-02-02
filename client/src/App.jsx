@@ -23,7 +23,11 @@ function App() {
   const navigate = useNavigate();
   let [game, setGame] = useState();
   let [found, setFound] = useState(false);
-  let [cTime, setcTime] = useState();
+  const [time, setTime] = useState(0);
+  const [timerWhite, setWhiteTimer] = useState();
+  const [timerBlack, setBlackTimer] = useState();
+  const [boardSize, setSize] = useState(500);
+
   useEffect(() => {
     if(!tokeninBrowser){
       navigate("/login");
@@ -108,6 +112,7 @@ function App() {
           game = message.game;
           game.chess_board = sq;
           setGame(game);
+          setTime
        //   alert("damn");
         }
     });
@@ -148,17 +153,24 @@ function App() {
       navigate("/roomGen");
     });
 
-    function gameCancelled() {
-      socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
+    socket.emit("gameCancelled", obj => {
       navigate("/roomGen");
-    }
+    });
 
     socket.on("roomExpired", message => {
       alert("Room expired!!");
       socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
       navigate("/roomGen");
     });
-
+  }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 500) { // Set your threshold here
+        setSize(window.innerWidth);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
 }, []);
 
 
@@ -187,8 +199,13 @@ function App() {
     <div className="bg-gray-800 text-white p-10">
     <div className='grid sm:grid-cols-1 md:grid-cols-3'>
       <div className='grid-span-1 flex flex-col justify-between'>
-          <div className='text-3xl'>
-            {game ? game.playerBlack : null}
+          <div className='flex'>  
+            <div className='text-3xl'>
+              {game ? game.playerBlack : null}
+            </div>
+            <div>
+              <Timer on = {timerWhite} remTime = {}></Timer>            
+            </div>
           </div>
 
           <div className='text-3xl'>
@@ -197,7 +214,7 @@ function App() {
       </div>
       <div className='grid-span-1'>
       <DndProvider backend={HTML5Backend}>
-        <div style = {containerStyle} id='board'>
+        <div className='' style = {{width : boardSize, height : boardSize}} id='board' >
           <Chessboard game = {game} />
         </div>
       </DndProvider>
