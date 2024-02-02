@@ -66,7 +66,6 @@ const Signup = function(){
     }
         return (
 
-        <div className="bg-gray-800 text-white p-5">
             <div className="grid grid-cols-3">
                 <div className="col-span-1"></div>
                 <div className="col-span-1 flex flex-col items-center justify-center" >
@@ -80,7 +79,6 @@ const Signup = function(){
                 </div>
                 <div className="col-span-2"></div>
     
-            </div>
             </div>
         );
       

@@ -2,11 +2,13 @@ import React, { useState, useCallback, useEffect } from "react";
 import { socket } from './socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 
 
 function RoomGen() {
   const [value, setVal] = useState('');
   const [link, setLink] = useState('');
+  const [timer, setTimer] = useState(0);
   const tokeninBrowser = Cookies.get();
   const navigate = useNavigate();
 
@@ -49,18 +51,30 @@ function RoomGen() {
   }, []); // Empty dependency array means the function is only created once.
   
   return (
-    <div className="bg-gray-800 text-white p-5">
     <div className="grid grid-cols-3">
     <div className="col-span-1"></div>
     <div className="col-span-1 flex flex-col items-center justify-center" >
 
       <h1 className="text-5xl font-bold text-center p-10">Room</h1>
       <input className = "border border-gray-100 p-2 text-black" id="roomID" placeholder="Your Room ID" value = {value} /> <br></br>
+    
+      
+        <select className = "border border-gray-100 p-2 text-black" id="cars">
+          <option>1</option>
+          <option>2</option>
+          <option>5</option>
+          <option>10</option>
+        </select>
+        <select className = "border border-gray-100 p-2 text-black" id="cars">
+          <option>1</option>
+          <option>2</option>
+          <option>5</option>
+          <option>10</option>
+        </select>
       <button className = "border border-gray-100 p-2 hover:bg-gray-400" type="button"  onClick={makeid}>Generate Room!</button><br></br>
       <a className = "text-blue-400 p-5" href = {link}> { link } </a>
     </div>
     <div className="col-span-2"></div>
-    </div>
     </div>
   );
 }

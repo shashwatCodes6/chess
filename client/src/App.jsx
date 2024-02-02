@@ -23,7 +23,7 @@ function App() {
   const navigate = useNavigate();
   let [game, setGame] = useState();
   let [found, setFound] = useState(false);
-
+  let [cTime, setcTime] = useState();
   useEffect(() => {
     if(!tokeninBrowser){
       navigate("/login");
@@ -152,6 +152,13 @@ function App() {
       socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
       navigate("/roomGen");
     }
+
+    socket.on("roomExpired", message => {
+      alert("Room expired!!");
+      socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
+      navigate("/roomGen");
+    });
+
 }, []);
 
 
@@ -161,6 +168,7 @@ function App() {
         <div className="col-span-1"></div>
         <div className="col-span-1 flex flex-col items-center justify-center" >
           <h1 className="text-3xl font-bold text-center p-10">Waiting for opponent....</h1>
+          
           <button onClick = {() => {
             socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
             navigate("/roomGen");
@@ -177,17 +185,15 @@ function App() {
   }
   return (
     <div className="bg-gray-800 text-white p-10">
-    <div className='grid grid-cols-3'>
-      <div className='grid-span-1'>
+    <div className='grid sm:grid-cols-1 md:grid-cols-3'>
+      <div className='grid-span-1 flex flex-col justify-between'>
+          <div className='text-3xl'>
+            {game ? game.playerBlack : null}
+          </div>
 
-        <h2 className='text-3xl'>
-          {game ? game.playerBlack : null}
-        </h2>
-
-        <h2 className='text-3xl'>
-          {game ? game.playerWhite : null}
-        </h2>
-
+          <div className='text-3xl'>
+            {game ? game.playerWhite : null}
+          </div>
       </div>
       <div className='grid-span-1'>
       <DndProvider backend={HTML5Backend}>

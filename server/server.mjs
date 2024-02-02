@@ -52,6 +52,7 @@ const Game = mongoose.model('Game', GameSchema);
 
 let games = new Map();
 let rmap = new Map();
+let timer = new Map();
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -67,6 +68,7 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   //console.log(socket);
+
   socket.on("join-room", async obj => {
     const roomID = obj.roomID;
     const auth = obj.auth;
@@ -85,20 +87,28 @@ io.on('connection', (socket) => {
      // console.log("yoooo");
       socket.join(roomID); 
       io.to(roomID).emit('roomCreated', {message : "ok"});
+      setTimeout (() => {
+        if(!rmap[roomID].playerBlack || !rmap[roomID].playerWhite){
+          socket.emit("roomExpired", {message : "bye bye"});
+        }
+      }, 1000 * 10);
     }
     else{
    //   console.log("yaha sab theek hai")
       socket.join(roomID); 
       const gameforRoomID = await Game.findOne({roomID : roomID});
      // console.log(gameforRoomID);
-     rmap[roomID] = {
-      playerWhite : gameforRoomID.game.playerWhite,
-      playerBlack : gameforRoomID.game.playerBlack,
-      turn : gameforRoomID.game.turn
-     };
+      rmap[roomID] = {
+        playerWhite : gameforRoomID.game.playerWhite,
+        playerBlack : gameforRoomID.game.playerBlack,
+        turn : gameforRoomID.game.turn,
+        start : new Date().getTime()
+      };
       io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game, board : games[roomID].game.board.squares});
     }
   }); 
+
+
 
   // app.jsx
   socket.on("newGame", async obj => {
@@ -151,13 +161,15 @@ io.on('connection', (socket) => {
 
 
   socket.on("leave-room", async obj =>{
-    if(games[obj.roomID] !== undefined){
-      delete games[obj.roomID];
-      delete rmap[obj.roomID];
-      delete socket[obj.roomID];
-      delete io.of("/").adapter.rooms[obj.roomID]
-    }      
-    await Game.deleteOne({roomID : obj.roomID}).then((res) => {});
+    if(games[obj.roomID] !== undefined)
+        delete games[obj.roomID];
+    if(rmap[obj.roomID] !== undefined)
+        delete rmap[obj.roomID];
+    if(socket[obj.roomID] !== undefined)
+        delete socket[obj.roomID];
+    if(io.of("/").adapter.rooms[obj.roomID] !== undefined)
+        delete io.of("/").adapter.rooms[obj.roomID]
+    await Game.deleteMany({roomID : obj.roomID}).then((res) => {});
   //  console.log("deleted",io.of("/").adapter.rooms, games);
   });
 });
