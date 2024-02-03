@@ -66,15 +66,28 @@ function RoomGen() {
           <option id = "5">5</option>
           <option id = "10">10</option>
         </select>
-        <select className = "border border-gray-100 p-2 text-black" id="increment" value={inc} onChange={e => setInc(parseInt(e.target.value))}>
-          <option id = "1">1</option>
+        {/* <select className = "border border-gray-100 p-2 text-black" id="increment" value={inc} onChange={e => setInc(parseInt(e.target.value))}>
+          <option id = "0">0</option>
           <option id = "2">2</option>
           <option id = "5">5</option>
-        </select>
+        </select> */}
       <button className = "border border-gray-100 p-2 hover:bg-gray-400" type="button"  onClick={async ()=>{
-        makeid();
+          const length = 6;
+          let result = '';
+          const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          const charactersLength = characters.length;
+          let counter = 0;
+          while (counter < length) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            counter++;
+          }
+        //  socket.emit("join-room", result);
+          const roomLink = window.location.origin + '/join/' + result;
+          setVal(result);
+          setLink(roomLink);
+
         socket.emit("createRoom", {
-          roomID : value,
+          roomID : result,
           timingControls : {
             time : timer,
             inc : inc

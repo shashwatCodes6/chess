@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { socket } from './socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
-
+import Timer from './Timer'
 
 const containerStyle = {
   width: 500,
@@ -23,9 +23,9 @@ function App() {
   const navigate = useNavigate();
   let [game, setGame] = useState();
   let [found, setFound] = useState(false);
-  const [time, setTime] = useState(0);
-  const [timerWhite, setWhiteTimer] = useState();
-  const [timerBlack, setBlackTimer] = useState();
+  const [time, setTime] = useState(1);
+  const [timerWhite, setWhiteTimer] = useState(null);
+  const [timerBlack, setBlackTimer] = useState(null);
   const [boardSize, setSize] = useState(500);
 
   useEffect(() => {
@@ -48,6 +48,26 @@ function App() {
         alert("Not authenticated!!");
         navigate("/login");
       }
+    })
+
+    fetch("http://localhost:3000/verifyRoomID", {
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json",
+      },
+      body : JSON.stringify({roomID : roomID}),
+    })
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+        if(data.msg === "ok"){
+          console.log("yay");
+        }else{
+          alert(data.msg)
+          navigate("/roomGen");
+        }
     })
 
     function decryptBoard(squares){
@@ -111,8 +131,10 @@ function App() {
           const sq = decryptBoard(message.board);
           game = message.game;
           game.chess_board = sq;
+          game.timingControls = message.timingControls;
           setGame(game);
-          setTime
+          setTime(message.timingControls);
+          console.log("time set : ", message.timingControls)
        //   alert("damn");
         }
     });
@@ -130,11 +152,18 @@ function App() {
       if(message.game.playerBlack && message.game.playerWhite){
         setFound(true);
       }
+      setWhiteTimer(new Date().getTime());
+      setBlackTimer(new Date().getTime());
       console.log(game);
     });
 
     socket.on("move", (move) => {
       const sq = decryptBoard(move.board);
+      if(game.turn === 0){
+        setWhiteTimer(new Date().getTime());
+      }else{
+        setBlackTimer(new Date().getTime());
+      }
       setGame(prevGame => ({
         ...prevGame,
         turn: 1 - prevGame.turn,
@@ -153,7 +182,8 @@ function App() {
       navigate("/roomGen");
     });
 
-    socket.emit("gameCancelled", obj => {
+    socket.on("gameCancelled", obj => {
+      alert("Room does not exist!");
       navigate("/roomGen");
     });
 
@@ -196,34 +226,38 @@ function App() {
     );
   }
   return (
-    <div className="bg-gray-800 text-white p-10">
-    <div className='grid sm:grid-cols-1 md:grid-cols-3'>
+  <div className="bg-gray-800 text-white p-10">
+    <div className='grid sm:grid-cols-1 md:grid-cols-4'>
       <div className='grid-span-1 flex flex-col justify-between'>
           <div className='flex'>  
             <div className='text-3xl'>
               {game ? game.playerBlack : null}
             </div>
             <div>
-              <Timer on = {timerWhite} remTime = {}></Timer>            
+              <Timer game = {game} on = {0} startTime = {timerBlack} totalTime = {time.time*60} />            
             </div>
           </div>
-
-          <div className='text-3xl'>
-            {game ? game.playerWhite : null}
+          <div className='flex'>  
+            <div className='text-3xl'>
+              {game ? game.playerWhite : null}
+            </div>
+            <div>
+              <Timer game = {game} on = {1} startTime = {timerWhite} totalTime = {time.time*60} />            
+            </div>
           </div>
-      </div>
-      <div className='grid-span-1'>
-      <DndProvider backend={HTML5Backend}>
-        <div className='' style = {{width : boardSize, height : boardSize}} id='board' >
-          <Chessboard game = {game} />
         </div>
-      </DndProvider>
+      <div className='grid-span-2'>
+        <DndProvider backend={HTML5Backend}>
+          <div className='' style = {{width : boardSize, height : boardSize}} id='board' >
+            <Chessboard game = {game} />
+          </div>
+        </DndProvider>
       </div>
       <div className='grid-span-1'>
         
       </div>
-      </div>
     </div>
+  </div>
   );
 }
 
