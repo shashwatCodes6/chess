@@ -174,12 +174,12 @@ io.on('connection', (socket) => {
       Object.entries(status.notatedMoves).forEach(([key, move]) => {
       //  console.log(key, move);
         if(move.src.file === from[0] && String(move.src.rank) === from[1] && move.dest.file === to[0] && String(move.dest.rank) === to[1]){
-          console.log("yoooo");
           gameClient.move(key);
           rmap[roomID].turn = 1 - rmap[roomID].turn;
           rmap[roomID].start = new Date().getTime();
           io.to(roomID).emit("move", {from : obj.from, to : obj.to, board : games[roomID].game.board.squares});
           io.to(roomID).emit("timer", {start : rmap[roomID].start});
+          console.log("start", rmap[roomID].start);
         }
       });
     }
