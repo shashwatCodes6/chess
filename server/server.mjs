@@ -112,14 +112,15 @@ io.on('connection', (socket) => {
         playerWhite : gameforRoomID.game.playerWhite,
         playerBlack : gameforRoomID.game.playerBlack,
         turn : gameforRoomID.game.turn,
-        start : new Date().getTime()
       };
       io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game, board : games[roomID].game.board.squares, timingControls : rmap[roomID].timingControls});
     
-  }
+    }
   }); 
 
-
+  socket.on("getTimer", obj => {
+    io.to(obj.roomID).emit("timer", {start : rmap[obj.roomID].start});
+  });
 
   // app.jsx
   socket.on("newGame", async obj => {
@@ -178,6 +179,7 @@ io.on('connection', (socket) => {
           rmap[roomID].turn = 1 - rmap[roomID].turn;
           rmap[roomID].start = new Date().getTime();
           io.to(roomID).emit("move", {from : obj.from, to : obj.to, board : games[roomID].game.board.squares});
+          io.to(roomID).emit("timer", {start : rmap[roomID].start});
         }
       });
     }

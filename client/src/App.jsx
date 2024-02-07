@@ -234,7 +234,7 @@ function App() {
               {game ? game.playerBlack : null}
             </div>
             <div>
-              <Timer game = {game} on = {0} startTime = {timerBlack} totalTime = {time.time*60} />            
+              <Timer on = {0} totalTime = {time.time*60} roomID={roomID} />            
             </div>
           </div>
           <div className='flex'>  
@@ -242,7 +242,7 @@ function App() {
               {game ? game.playerWhite : null}
             </div>
             <div>
-              <Timer game = {game} on = {1} startTime = {timerWhite} totalTime = {time.time*60} />            
+              <Timer on = {1} totalTime = {time.time*60} roomID={roomID} />            
             </div>
           </div>
         </div>
