@@ -111,15 +111,23 @@ io.on('connection', (socket) => {
         ...rmap[roomID],
         playerWhite : gameforRoomID.game.playerWhite,
         playerBlack : gameforRoomID.game.playerBlack,
-        turn : gameforRoomID.game.turn,
       };
-      io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game, board : games[roomID].game.board.squares, timingControls : rmap[roomID].timingControls});
+      io.to(roomID).emit('roomCreated', {
+        message : "Exists", 
+        game : gameforRoomID.game, 
+        board : games[roomID].game.board.squares, 
+        timingControls : rmap[roomID].timingControls,
+        turn : rmap[roomID].turn
+      });
     
     }
   }); 
 
   socket.on("getTimer", obj => {
-    io.to(obj.roomID).emit("timer", {start : rmap[obj.roomID].start});
+    io.to(obj.roomID).emit("timer", {
+      start : rmap[obj.roomID].start, 
+      turn : rmap[obj.roomID].turn
+    });
   });
 
   // app.jsx
@@ -167,18 +175,16 @@ io.on('connection', (socket) => {
     const to = String(x_map[obj.to.y]) + String(y_map[obj.to.x]);
     const gameClient = games[roomID];
     const status = gameClient.getStatus();
-    //checkmate , stalemate ka logic baaki hai sir
-    if((rmap[roomID].turn === 0 && obj.username === rmap[roomID].playerWhite) || 
+   if((rmap[roomID].turn === 0 && obj.username === rmap[roomID].playerWhite) || 
     (rmap[roomID].turn === 1 && obj.username === rmap[roomID].playerBlack)){
       console.log(from, to);
       Object.entries(status.notatedMoves).forEach(([key, move]) => {
-      //  console.log(key, move);
         if(move.src.file === from[0] && String(move.src.rank) === from[1] && move.dest.file === to[0] && String(move.dest.rank) === to[1]){
           gameClient.move(key);
           rmap[roomID].turn = 1 - rmap[roomID].turn;
           rmap[roomID].start = new Date().getTime();
           io.to(roomID).emit("move", {from : obj.from, to : obj.to, board : games[roomID].game.board.squares});
-          io.to(roomID).emit("timer", {start : rmap[roomID].start});
+          io.to(roomID).emit("timer", {start : rmap[roomID].start, turn : rmap[roomID].turn});
           console.log("start", rmap[roomID].start);
         }
       });

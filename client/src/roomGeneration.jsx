@@ -8,7 +8,7 @@ import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 function RoomGen() {
   const [value, setVal] = useState('');
   const [link, setLink] = useState('');
-  const [timer, setTimer] = useState(0);
+  const [timer, setTimer] = useState(1);
   const [inc, setInc] = useState(0);
   const tokeninBrowser = Cookies.get();
   const navigate = useNavigate();

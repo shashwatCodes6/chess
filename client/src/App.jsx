@@ -132,6 +132,7 @@ function App() {
           game = message.game;
           game.chess_board = sq;
           game.timingControls = message.timingControls;
+          game.turn = message.turn;
           setGame(game);
           setTime(message.timingControls);
           console.log("time set : ", message.timingControls)

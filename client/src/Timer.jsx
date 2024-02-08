@@ -24,6 +24,8 @@ function Timer({on, totalTime, roomID}) {
         
         socket.on("timer", (message) => {
             //console.log(onRef.current, on);
+            onRef.current = message.turn;
+            console.log(message);
             if(onRef.current === on){
                 setStartTime(prev => message.start);
                 startTime = message.start;
