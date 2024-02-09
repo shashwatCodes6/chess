@@ -7,14 +7,10 @@ import Signup from './Signup'
 import Nav from './Nav.jsx'
 import Foot from './Footer.jsx'
 import './index.css'
-import '@radix-ui/themes/styles.css';
-import { Theme } from '@radix-ui/themes';
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Theme>
   <div className='flex flex-col justify-between h-screen'>
     <Nav/>
     <div className='flex-grow-1 h-screen bg-gray-800 text-white p-5'>
@@ -29,5 +25,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </div>
     <Foot/>
   </div>
-  </Theme>
 )

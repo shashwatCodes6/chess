@@ -136,31 +136,35 @@ io.on('connection', (socket) => {
     const roomID = obj.roomID;
     const game = obj.game;
     const flag = obj.fl;
-    if(flag === true){
-      await Game.deleteOne({roomID : roomID}).then((res) => {});
-    }
-    const gameforRoomID = new Game({
-      roomID : roomID,
-      game : game
-    });
-    await gameforRoomID.save();
-    rmap[roomID] = {
-      ...rmap[roomID],
-      playerWhite : game.playerWhite,
-      playerBlack : game.playerBlack,
-      turn : game.turn,
-      start : new Date().getTime()
-    }
-    io.to(roomID).emit("gameCreated", {
-        game : game, 
-        board : games[roomID].game.board.squares, 
-        timingControls : rmap[roomID].timingControls, 
-        start : {
-          white : rmap[roomID].start,
-          black : rmap[roomID].start
-        }
+    try{
+      if(flag === true){
+        await Game.deleteOne({roomID : roomID}).then((res) => {});
       }
-    );
+      const gameforRoomID = new Game({
+        roomID : roomID,
+        game : game
+      });
+      await gameforRoomID.save();
+      rmap[roomID] = {
+        ...rmap[roomID],
+        playerWhite : game.playerWhite,
+        playerBlack : game.playerBlack,
+        turn : game.turn,
+        start : new Date().getTime()
+      }
+      io.to(roomID).emit("gameCreated", {
+          game : game, 
+          board : games[roomID].game.board.squares, 
+          timingControls : rmap[roomID].timingControls, 
+          start : {
+            white : rmap[roomID].start,
+            black : rmap[roomID].start
+          }
+        }
+      );
+    }catch(err){
+      io.to(roomID).emit("gameCancelled");
+    }
   });
 
 
@@ -284,7 +288,7 @@ app.post("/verifyToken", (req, res)=>{
 
 app.post("/verifyRoomID", (req, res)=>{
   const roomID = req.body.roomID;
-  console.log("aaya", req.body);
+  console.log("aaya", req.body, rmap[roomID]);
   if(rmap[roomID] === undefined){
     return res.status(404).json({msg : "room not found"});
   }else{

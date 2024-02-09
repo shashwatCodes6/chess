@@ -65,6 +65,7 @@ function App() {
         if(data.msg === "ok"){
           console.log("yay");
         }else{
+          socket.emit("leave-room", {roomID : roomID})
           alert(data.msg)
           navigate("/roomGen");
         }
@@ -210,7 +211,7 @@ function App() {
       <div className="grid grid-cols-3">
         <div className="col-span-1"></div>
         <div className="col-span-1 flex flex-col items-center justify-center" >
-          <h1 className="text-3xl font-bold text-center p-10">Waiting for opponent....</h1>
+          <h1 className="text-3xl font-bold text-center sm:p-0 md:p-10">Waiting for opponent....</h1>
           
           <button onClick = {() => {
             socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
@@ -227,7 +228,7 @@ function App() {
     );
   }
   return (
-  <div className="bg-gray-800 text-white p-10">
+  <div className="bg-gray-800 text-white md:p-10">
     <div className='grid sm:grid-cols-1 md:grid-cols-4'>
       <div className='grid-span-1 flex flex-col justify-between'>
           <div className='flex'>  
@@ -235,15 +236,15 @@ function App() {
               {game ? game.playerBlack : null}
             </div>
             <div>
-              <Timer on = {0} totalTime = {time.time*60} roomID={roomID} />            
+              <Timer on = {1} totalTime = {time.time*60} roomID={roomID} />            
             </div>
           </div>
-          <div className='flex'>  
+          <div className='hidden md:flex'>  
             <div className='text-3xl'>
               {game ? game.playerWhite : null}
             </div>
             <div>
-              <Timer on = {1} totalTime = {time.time*60} roomID={roomID} />            
+              <Timer on = {0} totalTime = {time.time*60} roomID={roomID} />            
             </div>
           </div>
         </div>
@@ -255,7 +256,14 @@ function App() {
         </DndProvider>
       </div>
       <div className='grid-span-1'>
-        
+          <div className='flex md:hidden'>
+            <div className='text-3xl'>
+              {game ? game.playerWhite : null}
+            </div>
+            <div>
+              <Timer on = {0} totalTime = {time.time*60} roomID={roomID} />            
+            </div>
+          </div>
       </div>
     </div>
   </div>

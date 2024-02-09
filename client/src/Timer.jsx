@@ -11,6 +11,7 @@ function Timer({on, totalTime, roomID}) {
     useEffect(() => {
         socket.on("move", obj => {
             onRef.current = 1 - onRef.current;
+            setCurrTime(totalTime1.current * 1000 - (new Date().getTime() - startTime));
             if(onRef.current === on){
                 console.log(totalTime1.current * 1000 - (new Date().getTime() - startTime), startTime)
             }else{
@@ -29,9 +30,8 @@ function Timer({on, totalTime, roomID}) {
             if(onRef.current === on){
                 setStartTime(prev => message.start);
                 startTime = message.start;
-                setCurrTime(totalTime1.current * 1000 - (new Date().getTime() - startTime));
                 currTime = (totalTime1.current * 1000 - (new Date().getTime() - startTime));
-                
+                setCurrTime(currTime);
              }
         });
     }, []);
