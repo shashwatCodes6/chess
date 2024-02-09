@@ -68,18 +68,32 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   //console.log(socket);
-
+  socket.on("createRoom", obj => {
+    const roomID = obj.roomID;
+    console.log("create room : ", obj);
+    rmap[roomID] = {
+      timingControls : obj.timingControls
+    }
+    setTimeout (() => {
+      console.log(rmap[roomID]);
+      if(!rmap[roomID].playerBlack || !rmap[roomID].playerWhite){
+        io.to(roomID).emit("roomExpired", {message : "bye bye"});
+      }
+    }, 1000 * 30);
+  });
   socket.on("join-room", async obj => {
     const roomID = obj.roomID;
     const auth = obj.auth;
     console.log(obj);
     const rooms = io.of("/").adapter.rooms;
-   // console.log(games[roomID]);
+    console.log( "yo", rmap[roomID]);
+  
     if(games[roomID] === undefined){
       const gameClient = chess.create({ PGN : true });
      // console.log(gameClient);
       games[roomID] = gameClient;
       rmap[roomID] = {
+        ...rmap[roomID], 
         playerWhite : null,
         playerBlack : null,
         turn : 0
@@ -87,11 +101,6 @@ io.on('connection', (socket) => {
      // console.log("yoooo");
       socket.join(roomID); 
       io.to(roomID).emit('roomCreated', {message : "ok"});
-      setTimeout (() => {
-        if(!rmap[roomID].playerBlack || !rmap[roomID].playerWhite){
-          socket.emit("roomExpired", {message : "bye bye"});
-        }
-      }, 1000 * 10);
     }
     else{
    //   console.log("yaha sab theek hai")
@@ -99,16 +108,27 @@ io.on('connection', (socket) => {
       const gameforRoomID = await Game.findOne({roomID : roomID});
      // console.log(gameforRoomID);
       rmap[roomID] = {
+        ...rmap[roomID],
         playerWhite : gameforRoomID.game.playerWhite,
         playerBlack : gameforRoomID.game.playerBlack,
-        turn : gameforRoomID.game.turn,
-        start : new Date().getTime()
       };
-      io.to(roomID).emit('roomCreated', {message : "Exists", game : gameforRoomID.game, board : games[roomID].game.board.squares});
+      io.to(roomID).emit('roomCreated', {
+        message : "Exists", 
+        game : gameforRoomID.game, 
+        board : games[roomID].game.board.squares, 
+        timingControls : rmap[roomID].timingControls,
+        turn : rmap[roomID].turn
+      });
+    
     }
   }); 
 
-
+  socket.on("getTimer", obj => {
+    io.to(obj.roomID).emit("timer", {
+      start : rmap[obj.roomID].start, 
+      turn : rmap[obj.roomID].turn
+    });
+  });
 
   // app.jsx
   socket.on("newGame", async obj => {
@@ -116,15 +136,35 @@ io.on('connection', (socket) => {
     const roomID = obj.roomID;
     const game = obj.game;
     const flag = obj.fl;
-    if(flag === true){
-      await Game.deleteOne({roomID : roomID}).then((res) => {});
+    try{
+      if(flag === true){
+        await Game.deleteOne({roomID : roomID}).then((res) => {});
+      }
+      const gameforRoomID = new Game({
+        roomID : roomID,
+        game : game
+      });
+      await gameforRoomID.save();
+      rmap[roomID] = {
+        ...rmap[roomID],
+        playerWhite : game.playerWhite,
+        playerBlack : game.playerBlack,
+        turn : game.turn,
+        start : new Date().getTime()
+      }
+      io.to(roomID).emit("gameCreated", {
+          game : game, 
+          board : games[roomID].game.board.squares, 
+          timingControls : rmap[roomID].timingControls, 
+          start : {
+            white : rmap[roomID].start,
+            black : rmap[roomID].start
+          }
+        }
+      );
+    }catch(err){
+      io.to(roomID).emit("gameCancelled");
     }
-    const gameforRoomID = new Game({
-      roomID : roomID,
-      game : game
-    });
-    await gameforRoomID.save();
-    io.to(roomID).emit("gameCreated", {game : game, board : games[roomID].game.board.squares });
   });
 
 
@@ -133,21 +173,23 @@ io.on('connection', (socket) => {
   socket.on("checkMove", obj => {
     const roomID = obj.roomID;
    // const from = String(x_map[obj.from.y]) + String(y_map[obj.from.x]);
+   if((rmap[roomID].turn === 0 && obj.username === rmap[roomID].playerWhite) || 
+    (rmap[roomID].turn === 1 && obj.username === rmap[roomID].playerBlack)){
     const from = obj.from.x  + obj.from.y; 
     const to = String(x_map[obj.to.y]) + String(y_map[obj.to.x]);
     const gameClient = games[roomID];
     const status = gameClient.getStatus();
-    //checkmate , stalemate ka logic baaki hai sir
-    if((rmap[roomID].turn === 0 && obj.username === rmap[roomID].playerWhite) || 
+   if((rmap[roomID].turn === 0 && obj.username === rmap[roomID].playerWhite) || 
     (rmap[roomID].turn === 1 && obj.username === rmap[roomID].playerBlack)){
       console.log(from, to);
       Object.entries(status.notatedMoves).forEach(([key, move]) => {
-      //  console.log(key, move);
         if(move.src.file === from[0] && String(move.src.rank) === from[1] && move.dest.file === to[0] && String(move.dest.rank) === to[1]){
-          console.log("yoooo");
           gameClient.move(key);
           rmap[roomID].turn = 1 - rmap[roomID].turn;
+          rmap[roomID].start = new Date().getTime();
           io.to(roomID).emit("move", {from : obj.from, to : obj.to, board : games[roomID].game.board.squares});
+          io.to(roomID).emit("timer", {start : rmap[roomID].start, turn : rmap[roomID].turn});
+          console.log("start", rmap[roomID].start);
         }
       });
     }
@@ -157,6 +199,7 @@ io.on('connection', (socket) => {
       io.to(roomID).emit("gameEnded", {winner : obj.username, result : "Draw"});
     }
     console.log(obj);
+    }
   }); 
 
 
@@ -242,6 +285,17 @@ app.post("/verifyToken", (req, res)=>{
       return res.json({msg : "Invalid token"});
     }
 });
+
+app.post("/verifyRoomID", (req, res)=>{
+  const roomID = req.body.roomID;
+  console.log("aaya", req.body, rmap[roomID]);
+  if(rmap[roomID] === undefined){
+    return res.status(404).json({msg : "room not found"});
+  }else{
+    return res.json({msg : "ok"});
+  }
+});
+
 
 const port = 3000;
 server.listen(port, () => {

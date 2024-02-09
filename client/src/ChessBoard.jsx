@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import Square from './Square';
 import Piece from './Pieces';
+import { socket } from './socket';
 
 const boardStyle = {
   width: "100%",
@@ -21,6 +22,9 @@ const Chessboard = ({game}) => {
   useEffect(() => {
     board = game.chess_board;
     setGame(game);
+    socket.on("roomCreated", obj => {
+      game.turn = message.turn
+    });
     function renderSquare(i){
       const x = i%8;
       const y = Math.floor(i/8);

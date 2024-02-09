@@ -11,3 +11,10 @@ export const game = atomFamily({
         set(atoms[roomID], newValue);
     },
 });
+
+
+export const timeAtom = atomFamily({
+    key : "time",
+    get : roomID => async({get}) => {
+    }
+})

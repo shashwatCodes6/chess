@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { socket } from './socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
-
+import Timer from './Timer'
 
 const containerStyle = {
   width: 500,
@@ -23,7 +23,11 @@ function App() {
   const navigate = useNavigate();
   let [game, setGame] = useState();
   let [found, setFound] = useState(false);
-  let [cTime, setcTime] = useState();
+  const [time, setTime] = useState(1);
+  const [timerWhite, setWhiteTimer] = useState(null);
+  const [timerBlack, setBlackTimer] = useState(null);
+  const [boardSize, setSize] = useState(500);
+
   useEffect(() => {
     if(!tokeninBrowser){
       navigate("/login");
@@ -44,6 +48,27 @@ function App() {
         alert("Not authenticated!!");
         navigate("/login");
       }
+    })
+
+    fetch("http://localhost:3000/verifyRoomID", {
+      method : "POST",
+      headers : {
+        "Content-Type" : "application/json",
+      },
+      body : JSON.stringify({roomID : roomID}),
+    })
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+        if(data.msg === "ok"){
+          console.log("yay");
+        }else{
+          socket.emit("leave-room", {roomID : roomID})
+          alert(data.msg)
+          navigate("/roomGen");
+        }
     })
 
     function decryptBoard(squares){
@@ -107,7 +132,11 @@ function App() {
           const sq = decryptBoard(message.board);
           game = message.game;
           game.chess_board = sq;
+          game.timingControls = message.timingControls;
+          game.turn = message.turn;
           setGame(game);
+          setTime(message.timingControls);
+          console.log("time set : ", message.timingControls)
        //   alert("damn");
         }
     });
@@ -125,11 +154,18 @@ function App() {
       if(message.game.playerBlack && message.game.playerWhite){
         setFound(true);
       }
+      setWhiteTimer(new Date().getTime());
+      setBlackTimer(new Date().getTime());
       console.log(game);
     });
 
     socket.on("move", (move) => {
       const sq = decryptBoard(move.board);
+      if(game.turn === 0){
+        setWhiteTimer(new Date().getTime());
+      }else{
+        setBlackTimer(new Date().getTime());
+      }
       setGame(prevGame => ({
         ...prevGame,
         turn: 1 - prevGame.turn,
@@ -148,17 +184,25 @@ function App() {
       navigate("/roomGen");
     });
 
-    function gameCancelled() {
-      socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
+    socket.on("gameCancelled", obj => {
+      alert("Room does not exist!");
       navigate("/roomGen");
-    }
+    });
 
     socket.on("roomExpired", message => {
       alert("Room expired!!");
       socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
       navigate("/roomGen");
     });
-
+  }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 500) { // Set your threshold here
+        setSize(window.innerWidth);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
 }, []);
 
 
@@ -167,7 +211,7 @@ function App() {
       <div className="grid grid-cols-3">
         <div className="col-span-1"></div>
         <div className="col-span-1 flex flex-col items-center justify-center" >
-          <h1 className="text-3xl font-bold text-center p-10">Waiting for opponent....</h1>
+          <h1 className="text-3xl font-bold text-center sm:p-0 md:p-10">Waiting for opponent....</h1>
           
           <button onClick = {() => {
             socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
@@ -184,29 +228,45 @@ function App() {
     );
   }
   return (
-    <div className="bg-gray-800 text-white p-10">
-    <div className='grid sm:grid-cols-1 md:grid-cols-3'>
+  <div className="bg-gray-800 text-white md:p-10">
+    <div className='grid sm:grid-cols-1 md:grid-cols-4'>
       <div className='grid-span-1 flex flex-col justify-between'>
-          <div className='text-3xl'>
-            {game ? game.playerBlack : null}
+          <div className='flex'>  
+            <div className='text-3xl'>
+              {game ? game.playerBlack : null}
+            </div>
+            <div>
+              <Timer on = {1} totalTime = {time.time*60} roomID={roomID} />            
+            </div>
           </div>
-
-          <div className='text-3xl'>
-            {game ? game.playerWhite : null}
+          <div className='hidden md:flex'>  
+            <div className='text-3xl'>
+              {game ? game.playerWhite : null}
+            </div>
+            <div>
+              <Timer on = {0} totalTime = {time.time*60} roomID={roomID} />            
+            </div>
           </div>
-      </div>
-      <div className='grid-span-1'>
-      <DndProvider backend={HTML5Backend}>
-        <div style = {containerStyle} id='board'>
-          <Chessboard game = {game} />
         </div>
-      </DndProvider>
+      <div className='grid-span-2'>
+        <DndProvider backend={HTML5Backend}>
+          <div className='' style = {{width : boardSize, height : boardSize}} id='board' >
+            <Chessboard game = {game} />
+          </div>
+        </DndProvider>
       </div>
       <div className='grid-span-1'>
-        
-      </div>
+          <div className='flex md:hidden'>
+            <div className='text-3xl'>
+              {game ? game.playerWhite : null}
+            </div>
+            <div>
+              <Timer on = {0} totalTime = {time.time*60} roomID={roomID} />            
+            </div>
+          </div>
       </div>
     </div>
+  </div>
   );
 }
 
