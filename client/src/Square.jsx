@@ -29,22 +29,6 @@ function Square({ black, children, game, x, y }) {
       //    return true;
       // },  
       drop: async (item, monitor) => {
-        // const clientOffset = monitor.getClientOffset();
-        // const x = clientOffset.x;
-        // const y = clientOffset.y;
-        // console.log('Dropped item:', item);
-        // console.log('Client offset:', clientOffset);
-        // const username = Cookies.get().username;
-        // console.log(username, game1.turn, game.playerBlack);
-        // // if((game.turn === 0 && username === game.playerWhite) || 
-        // // (game.turn === 1 && username === game.playerBlack)){
-        //   socket.emit("checkMove", {
-        //     from : {x : item.id[3], y : item.id[4]}, 
-        //     to : {x : Math.floor(y / (62.5)), y : Math.floor(x / (62.5))}, 
-        //     username : username, 
-        //     roomID : game.roomID
-        //   });
-       // }
         const clientOffset = monitor.getClientOffset();
         const boardRef = document.getElementById('board'); // Replace 'board' with the id of your board element
         const boardRect = boardRef.getBoundingClientRect();
@@ -62,8 +46,8 @@ function Square({ black, children, game, x, y }) {
         });
       },
       collect: monitor => ({
-        isOver: !!monitor.isOver(),
-        canDrop: !!monitor.canDrop(),
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
       }),
     }),
     [game1],

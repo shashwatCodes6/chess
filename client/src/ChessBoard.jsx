@@ -47,7 +47,7 @@ const Chessboard = ({game}) => {
     }
     squares = squares1;
     setSq(squares1);
-    console.log("sq waale mei hu", squares);
+   // console.log("sq waale mei hu", squares);
     
   }, [game]);
   return (

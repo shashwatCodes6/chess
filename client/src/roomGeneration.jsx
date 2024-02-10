@@ -53,7 +53,7 @@ function RoomGen() {
   return (
     <div className="grid grid-cols-3">
     <div className="col-span-1"></div>
-    <div className="col-span-1 flex flex-col items-center justify-center" >
+    <div className="col-span-1 border border-black rounded-lg flex flex-col items-center justify-center" >
 
       <h1 className="text-5xl font-bold text-center p-10">Room</h1>
       <input className = "border rounded-lg border-gray-100 p-2 text-black" id="roomID" placeholder="Your Room ID" value = {value} /> <br></br>
@@ -89,9 +89,13 @@ function RoomGen() {
           }
         });
       }}>Generate Room!</button><br></br>
-      <a className = "text-blue-400 p-5" href = {link}> { link } </a>
+      
+    <button className = "border rounded-lg border-gray-100 p-2 hover:bg-gray-400 m-2" type="button"  onClick={() => {
+      navigate("/join/" + value);
+    }}>
+      Join the game!
+    </button>
     </div>
-    <div className="col-span-2"></div>
     </div>
   );
 }

@@ -26,7 +26,7 @@ function App() {
   const [time, setTime] = useState(1);
   const [timerWhite, setWhiteTimer] = useState(null);
   const [timerBlack, setBlackTimer] = useState(null);
-  const [boardSize, setSize] = useState(500);
+  let [boardSize, setSize] = useState(500);
 
   useEffect(() => {
     if(!tokeninBrowser){
@@ -195,14 +195,14 @@ function App() {
       navigate("/roomGen");
     });
   }, []);
-  useEffect(() => {
+useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 500) { // Set your threshold here
+        boardSize = window.innerWidth;
         setSize(window.innerWidth);
       }
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
 }, []);
 
 
@@ -211,7 +211,7 @@ function App() {
       <div className="grid grid-cols-3">
         <div className="col-span-1"></div>
         <div className="col-span-1 flex flex-col items-center justify-center" >
-          <h1 className="text-3xl font-bold text-center sm:p-0 md:p-10">Waiting for opponent....</h1>
+          <h1 className="text-3xl font-bold text-center p-10">Waiting for opponent....</h1>
           
           <button onClick = {() => {
             socket.emit("leave-room", {roomID : roomID, auth : Cookies.get().username});
@@ -228,7 +228,7 @@ function App() {
     );
   }
   return (
-  <div className="bg-gray-800 text-white md:p-10">
+  <div className="md:p-10">
     <div className='grid sm:grid-cols-1 md:grid-cols-4'>
       <div className='grid-span-1 flex flex-col justify-between'>
           <div className='flex'>  
