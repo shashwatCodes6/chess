@@ -195,7 +195,8 @@ function App() {
       navigate("/roomGen");
     });
   }, []);
-useEffect(() => {
+
+  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 500) { // Set your threshold here
         boardSize = window.innerWidth;
@@ -203,7 +204,7 @@ useEffect(() => {
       }
     };
     window.addEventListener('resize', handleResize);
-}, []);
+  }, []);
 
 
   if(found === false){
@@ -264,6 +265,16 @@ useEffect(() => {
               <Timer on = {0} totalTime = {time.time*60} roomID={roomID} />            
             </div>
           </div>
+      </div>
+      <div className=''>
+      <div className='text-black border border-gray-50 hover:bg-red-400'>
+        <button onClick = {() => {
+          socket.emit("resign", {roomID : roomID, auth : Cookies.get().username});
+          navigate("/roomGen");
+        }}>
+          Resign
+        </button>
+      </div>
       </div>
     </div>
   </div>

@@ -198,10 +198,20 @@ io.on('connection', (socket) => {
     }else if(gameClient.getStatus().isStalemate === true || gameClient.getStatus().isRepetition === true){
       io.to(roomID).emit("gameEnded", {winner : obj.username, result : "Draw"});
     }
-    console.log(obj);
+    //console.log(obj);
     }
   }); 
 
+
+  socket.on("resign", async obj => {
+    io.to(obj.roomID).emit("gameEnded", {
+        result : "Win", 
+        winner : (obj.auth === rmap[obj.roomID].playerWhite ? 
+          rmap[obj.roomID].playerBlack : 
+          rmap[obj.roomID].playerWhite
+          )
+    });
+  });
 
   socket.on("leave-room", async obj =>{
     if(games[obj.roomID] !== undefined)

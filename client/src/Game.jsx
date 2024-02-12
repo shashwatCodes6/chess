@@ -22,20 +22,4 @@ export class Game{
   setRoomID(roomID){
     this.roomID = roomID;
   }
-  observe(o){
-
-  }
-  canMove(move){
-
-  }
-  playMove(move){
-    this.chess_board[move.to.x][move.to.y] = this.chess_board[move.from.x][move.from.y];
-    this.chess_board[move.from.x][move.from.y] = '-';
-  }
-  isOver(){
-
-  }
-  emitChange(){
-    
-  }
 }
