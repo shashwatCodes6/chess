@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { socket } from './socket';
+import { socket } from '../socket/socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
 

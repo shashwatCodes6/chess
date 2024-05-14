@@ -1,14 +1,14 @@
 import React from 'react';
 import {useEffect, useState} from 'react'
-import Chessboard from './ChessBoard';
+import Chessboard from './components/ChessBoard';
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DndProvider } from 'react-dnd'
-import { Game } from './Game';
+import { Game } from './components/Game';
 import { useParams } from "react-router-dom";
-import { socket } from './socket';
+import { socket } from './socket/socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
-import Timer from './Timer'
+import Timer from './components/Timer'
 
 const containerStyle = {
   width: 500,

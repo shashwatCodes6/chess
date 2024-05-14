@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import zod from 'zod'
-import { socket } from './socket';
+import { socket } from '../socket/socket';
 import { useState } from 'react'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'

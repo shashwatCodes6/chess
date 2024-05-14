@@ -1,12 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import RoomGen from './roomGeneration.jsx'
-import Signin from './Signin'
-import Signup from './Signup'
-import Logout from './Logout'
-import Nav from './Nav.jsx'
-import Foot from './Footer.jsx'
+import RoomGen from './components/roomGeneration.jsx'
+import Signin from './auth/Signin.jsx'
+import Signup from './auth/Signup.jsx'
+import Logout from './auth/Logout.jsx'
+import Nav from './components/Nav.jsx'
+import Foot from './components/Footer.jsx'
 import './index.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 

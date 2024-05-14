@@ -8,7 +8,7 @@ function Nav(){
     return (
         <div className='flex p-1 justify-between bg-gradient-to-r'>
             <div className='flex'>
-                <img className = "m-1 h-8" src = "/src/components/b_n.png"></img>
+                <img className = "m-1 h-8" src = "/src/assets/b_n.png"></img>
                 <p className='p-2'>MyChess </p>
             </div>
             <div className='flex'>

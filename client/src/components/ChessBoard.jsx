@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import Square from './Square';
 import Piece from './Pieces';
-import { socket } from './socket';
+import { socket } from '../socket/socket';
 
 const boardStyle = {
   width: "100%",

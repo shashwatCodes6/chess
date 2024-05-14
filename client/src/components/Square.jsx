@@ -1,7 +1,7 @@
 import { useDrop } from 'react-dnd'
 //import { Overlay, OverlayType } from './Overlay.js'
 import Square1  from './Square1.jsx'
-import { socket } from './socket';
+import { socket } from '../socket/socket.js';
 import Cookies from 'js-cookie';
 import { useCallback, useEffect, useState } from 'react';
 
