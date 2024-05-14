@@ -6,7 +6,7 @@ import http from "http";
 import { Server } from "socket.io";
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-const key = "mysecret";
+import dotenv from 'dotenv'
 
 const x_map = {
   0 : "a",
@@ -32,7 +32,10 @@ const y_map = {
 
 app.use(express.json());
 app.use(cors());
-const db = mongoose.connect("mongodb+srv://shashwat123:shashwat123@cluster0.qkxrwkq.mongodb.net/");
+dotenv.config({path:['.env']})
+
+
+const db = mongoose.connect(process.env.DATABASE_URL);
 
 const UserSchema = new mongoose.Schema({
   email : String,
@@ -253,7 +256,7 @@ app.post("/signup", async (req, res) => {
         username : input.username,
         password : input.password
       };
-      const token = jwt.sign(obj, key);
+      const token = jwt.sign(obj, process.env.KEY);
       //console.log(token);
       return res.json({token : token})
     }
@@ -276,7 +279,7 @@ app.post("/login", async (req, res) => {
         password : input.password
       };
       if(input.password === value.password){
-        const token = jwt.sign(obj, key);
+        const token = jwt.sign(obj, process.env.KEY);
         //console.log(token);
         return res.json({token : token})
       }else{
@@ -289,7 +292,7 @@ app.post("/verifyToken", (req, res)=>{
     const token = req.body.token;
     //console.log(req.body);
     try{
-      const verifyToken = jwt.verify(token, key);
+      const verifyToken = jwt.verify(token, process.env.KEY);
       return res.json({msg : "Success"});
     }catch(err){
       return res.json({msg : "Invalid token"});
