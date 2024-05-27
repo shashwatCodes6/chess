@@ -60,7 +60,6 @@ let timer = new Map();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
   },
   secure : true
@@ -233,7 +232,7 @@ io.on('connection', (socket) => {
 app.post("/signup", async (req, res) => {
   const input = req.body;
     let found = false;
-    const value = await User.findOne({username : input.username})
+    const value = (input.username ? await User.findOne({username : input.username}) : null);
     //console.log(input, value);
     if(value !== null){
       found = true;
@@ -265,8 +264,8 @@ app.post("/signup", async (req, res) => {
 app.post("/login", async (req, res) => {
   const input = req.body;
     let found = false;
-    const value = await User.findOne({username : input.username})
-    //console.log(input, value);
+    const value = (input.username ? await User.findOne({username : input.username}) : null);
+    // console.log(input.username , value);
     if(value !== null){
       found = true;
     }

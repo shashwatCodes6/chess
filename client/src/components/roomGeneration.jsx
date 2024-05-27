@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { socket } from '../socket/socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
+import {REACT_APP_SERVER_URL} from '../config'
 
 
 function RoomGen() {
@@ -16,7 +17,7 @@ function RoomGen() {
     if(!tokeninBrowser){
       navigate("/login");
     }
-    fetch("http://localhost:3000/verifyToken", {
+    fetch(`${REACT_APP_SERVER_URL}/verifyToken`, {
       method : "POST",
       headers: {
         'Content-Type': 'application/json',

@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
-
+import {REACT_APP_SERVER_URL} from '../config'
 
 const Signin = function(){
     const [shouldRedirect, setRedirect] = useState(false);
@@ -16,7 +16,7 @@ const Signin = function(){
     useEffect(() => {
         setToken({token : Cookies.get().token});
         if(tokeninBrowser.token !== "") {
-            fetch("http://localhost:3000/verifyToken", {
+            fetch(`${REACT_APP_SERVER_URL}/verifyToken`, {
                 method : "POST", 
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const Signin = function(){
         };
       //  console.log(obj);
         
-        fetch("http://localhost:3000/login", {
+        fetch(`${REACT_APP_SERVER_URL}/login`, {
             method : "POST",
             headers: {
                 'Content-Type': 'application/json',

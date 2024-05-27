@@ -9,6 +9,7 @@ import { socket } from './socket/socket';
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
 import Timer from './components/Timer'
+import {REACT_APP_SERVER_URL} from './config'
 
 const containerStyle = {
   width: 500,
@@ -32,7 +33,7 @@ function App() {
     if(!tokeninBrowser){
       navigate("/login");
     }
-    fetch("http://localhost:3000/verifyToken", {
+    fetch("https://chess-3-y3v1.onrender.com/verifyToken", {
       method : "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ function App() {
       }
     })
 
-    fetch("http://localhost:3000/verifyRoomID", {
+    fetch(`${REACT_APP_SERVER_URL}/verifyRoomID`, {
       method : "POST",
       headers : {
         "Content-Type" : "application/json",

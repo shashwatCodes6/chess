@@ -4,7 +4,7 @@ import { socket } from '../socket/socket';
 import { useState } from 'react'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
-
+import {REACT_APP_SERVER_URL} from '../config'
 
 const schema = zod.object({
     name : zod.string(),
@@ -36,7 +36,7 @@ const Signup = function(){
         if(!response.success){
             alert("Invalid input!!");
         }else{
-            fetch("http://localhost:3000/signup", {
+            fetch(`${REACT_APP_SERVER_URL}/signup`, {
                 method : "POST",
                 headers: {
                     'Content-Type': 'application/json',
