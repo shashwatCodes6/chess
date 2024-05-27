@@ -8,14 +8,14 @@ import Logout from './auth/Logout.jsx'
 import Nav from './components/Nav.jsx'
 import Foot from './components/Footer.jsx'
 import './index.css'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <div className='flex flex-col justify-between h-screen'>
     <Nav/>
     <div className='flex-grow-1 h-screen bg-gradient-to-r from-cyan-800 to-blue-800" text-white p-5'>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
             <Route path="/roomGen" element={<RoomGen />} />
             <Route path="/login" element={<Signin />} />
@@ -23,7 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/logout" element={<Logout />} />
             <Route path="/join/:roomID" element={<App/>} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </div>
     <Foot/>
   </div>
