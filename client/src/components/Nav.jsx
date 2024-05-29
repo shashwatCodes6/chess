@@ -16,12 +16,12 @@ function Nav(){
                 {
                     username !== "undefined" ? 
                     <div className='p-2 border border-black rounded-lg m-1 hover:bg-slate-400 hover:text-white'> {username} </div> : 
-                    (<div className='p-2 border border-black rounded-lg m-1 hover:bg-slate-400 hover:text-white' onClick={() =>  {}}>Login</div>)
+                    (<div className='p-2 border border-black rounded-lg m-1 hover:bg-slate-400 hover:text-white' onClick={() =>  {window.location.href = ("http://localhost:5173/#/login")}}>Login</div>)
                 }
                 {
                     username === "undefined" ? 
-                        (<div className='p-2  border border-black rounded-lg m-1 hover:bg-slate-400 hover:text-white' onClick={() => {}}>Signup</div>) : 
-                        (<div className='p-2  border border-black rounded-lg m-1 hover:bg-slate-400 hover:text-white' onClick={() => {}}>Logout</div>)
+                        (<div className='p-2  border border-black rounded-lg m-1 hover:bg-slate-400 hover:text-white' onClick={() => {window.location.href = ("http://localhost:5173/#/signup")}}>Signup</div>) : 
+                        (<div className='p-2  border border-black rounded-lg m-1 hover:bg-slate-400 hover:text-white' onClick={() => {window.location.href = ("http://localhost:5173/logout")}}>Logout</div>)
                 }
             </div>
         </div>
