@@ -46,7 +46,7 @@ function RoomGen() {
       counter++;
     }
   //  socket.emit("join-room", result);
-    const roomLink = window.location.origin + '/join/' + result;
+    const roomLink = window.location.origin + '/#/join/' + result;
     setVal(result);
     setLink(roomLink);
   }, []); // Empty dependency array means the function is only created once.
@@ -92,8 +92,8 @@ function RoomGen() {
       }}>Generate Room!</button><br></br>
       
     <button className = "border rounded-lg border-gray-100 p-2 hover:bg-gray-400 m-2" type="button"  onClick={() => {
-      window.open( "/join/" + value, '_blank').focus();
-      // navigate("/join/" + value);
+      // window.open( "/join/" + value, '_blank').focus();
+      navigate("/join/" + value);
     }}>
       Join the game!
     </button>

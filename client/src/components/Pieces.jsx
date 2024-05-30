@@ -16,7 +16,7 @@ const Piece = ({pid}) => {
   const src = (pid === '-' ? null : pid[0] + pid[1] + pid[2]);
   return (
     <>
-      <DragPreviewImage connect={preview} src = {`/src/assets/drag-preview.png`} />
+      <DragPreviewImage connect={preview} src = {`/assets/drag-preview.png`} />
       <div
         ref={drag}
         style={{
@@ -30,7 +30,7 @@ const Piece = ({pid}) => {
           src == null ? 
             <img /> : 
             <img height = "100%" width = "100%" 
-            src = {`/src/assets/${pid[0]+pid[1]+pid[2]}.png`} />
+            src = {`/assets/${pid[0]+pid[1]+pid[2]}.png`} />
         }
       </div>
     </>
