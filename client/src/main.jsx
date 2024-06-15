@@ -13,8 +13,7 @@ import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <div className='flex flex-col justify-between h-screen'>
-    <Nav/>
-    <div className='flex-grow-1 h-screen bg-gradient-to-r from-cyan-800 to-blue-800" text-white p-5'>
+    <div className='flex-grow-1 h-screen bg-gradient-to-r from-cyan-800 to-blue-800" text-white'>
       <HashRouter>
         <Routes>
             <Route path="/roomGen" element={<RoomGen />} />

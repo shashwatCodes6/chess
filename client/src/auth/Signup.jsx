@@ -5,6 +5,7 @@ import { useState } from 'react'
 import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import {REACT_APP_SERVER_URL} from '../config'
+import Nav from '../components/Nav';
 
 const schema = zod.object({
     name : zod.string(),
@@ -65,7 +66,8 @@ const Signup = function(){
         }
     }
         return (
-
+            <>
+                <Nav/>
             <div className="grid grid-cols-3">
                 <div className="col-span-1"></div>
                 <div className="col-span-1 flex flex-col items-center justify-center" >
@@ -80,6 +82,8 @@ const Signup = function(){
                 <div className="col-span-2"></div>
     
             </div>
+
+            </>
         );
       
     

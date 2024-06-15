@@ -10,6 +10,7 @@ import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
 import Timer from './components/Timer'
 import {REACT_APP_SERVER_URL} from './config'
+import Nav from './components/Nav';
 
 const containerStyle = {
   width: 500,
@@ -210,6 +211,8 @@ function App() {
 
   if(found === false){
     return (
+      <>
+      <Nav></Nav>
       <div className="grid grid-cols-3">
         <div className="col-span-1"></div>
         <div className="col-span-1 flex flex-col items-center justify-center" >
@@ -227,10 +230,13 @@ function App() {
         <div className="col-span-2"></div>
   
       </div>
+      </>
     );
   }
   return (
-  <div className="md:p-10">
+    <>
+    <Nav/>
+  <div className="md:p-10 m-10">
     <div className='grid sm:grid-cols-1 md:grid-cols-4'>
       <div className='grid-span-1 flex flex-col justify-between'>
           <div className='flex'>  
@@ -279,6 +285,7 @@ function App() {
       </div>
     </div>
   </div>
+  </>
   );
 }
 

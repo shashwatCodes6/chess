@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import {REACT_APP_SERVER_URL} from '../config'
+import Nav from '../components/Nav'
 
 const Signin = function(){
     const [shouldRedirect, setRedirect] = useState(false);
@@ -76,6 +77,8 @@ const Signin = function(){
         }
     }, [shouldRedirect]);
     return (
+        <>
+        <Nav/>
         <div className="grid grid-cols-3">
             <div className="col-span-1"></div>
             <div className="col-span-1 flex flex-col items-center justify-center" >
@@ -88,6 +91,7 @@ const Signin = function(){
             <div className="col-span-2"></div>
 
         </div>
+        </>
     );
 }
 
