@@ -58,8 +58,13 @@ let rmap = new Map();
 let timer = new Map();
 
 const server = http.createServer(app);
-const io = new Server(server);
-
+const io = new Server(server, {
+  path: '/socket.io',
+  cors: {
+    origin: 'https://chessfe1.onrender.com/',
+    methods: ['GET', 'POST']
+  }
+});
 
 
 
