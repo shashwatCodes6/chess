@@ -57,11 +57,11 @@ let games = new Map();
 let rmap = new Map();
 let timer = new Map();
 
-const server = http.createServer(app);
+const server = http.Server(app);
 const io = new Server(server, {
-  path: '/socket.io',
+  path: '',
   cors: {
-    origin: 'https://chessfe1.onrender.com/',
+    origin: ['https://chessfe1.onrender.com/', 'http://localhost:5173', 'http://localhost:8000'],
     methods: ['GET', 'POST']
   }
 });

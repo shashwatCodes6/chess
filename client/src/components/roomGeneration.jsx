@@ -94,9 +94,11 @@ function RoomGen() {
         });
       }}>Generate Room!</button><br></br>
       
-    <button className = "m-5 border rounded-lg border-gray-100 p-2 hover:bg-gray-400" type="button"  onClick={() => {
-      // window.open( "/join/" + value, '_blank').focus();
-      navigate("/join/" + value);
+    <button className = "m-5 border rounded-lg border-gray-100 p-2 hover:bg-gray-400" type="button"  
+    onClick={async () => {
+      await new Promise (() => setTimeout(() => {window.open( "/#/join/" + value, '_blank').focus();}, 1000))
+      
+      // navigate("/join/" + value);
     }}>
       Join the game!
     </button>
