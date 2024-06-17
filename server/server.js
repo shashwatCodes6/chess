@@ -63,7 +63,8 @@ const io = new Server(server, {
   cors: {
     origin: ['https://chessfe1.onrender.com/', 'http://localhost:5173', 'http://localhost:8000'],
     methods: ['GET', 'POST']
-  }
+  },
+  transports: ['websocket', 'polling']
 });
 
 
@@ -301,11 +302,11 @@ app.post("/verifyToken", (req, res)=>{
 app.post("/verifyRoomID", (req, res)=>{
   const roomID = req.body.roomID;
   console.log("aaya", req.body, rmap[roomID]);
-  if(rmap[roomID] === undefined){
-    return res.status(404).json({msg : "room not found"});
-  }else{
+  // if(rmap[roomID] === undefined){
+  //   return res.status(404).json({msg : "room not found"});
+  // }
     return res.json({msg : "ok"});
-  }
+
 });
 
 
