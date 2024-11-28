@@ -68,21 +68,20 @@ const Signup = function(){
         return (
             <>
                 <Nav/>
-            <div className="grid grid-cols-3">
-                <div className="col-span-1"></div>
-                <div className="col-span-1 flex flex-col items-center justify-center" >
-    
-                <h1 className="text-3xl font-bold text-center p-10">Sign Up</h1>
-                <input className = "text-black border border-black p-2" onChange = {e => {setName(e.target.value)}} placeholder = "Name" id = "name" required /> <br></br>
-                <input className = "text-black border border-black p-2" onChange = {e => setEmail(e.target.value)} placeholder = "Email ID" id = "email" type = "email" required /> <br></br>
-                <input className = "text-black border border-black p-2" onChange = {e => setUname(e.target.value)} placeholder = "User Name" id = "username" required /> <br></br>
-                <input className = "text-black border border-black p-2" onChange = {e => setPass(e.target.value)} placeholder = "Password" id = "password" required /> <br></br>
-                <button className = "border border-gray-100 p-2 hover:bg-gray-500" type="button"  onClick = {handleSubmit}>Submit!</button><br></br>
+                <div className="grid grid-cols-3">
+                    <div className="col-span-1"></div>
+                    <div className="col-span-1 flex flex-col items-center justify-center" >
+        
+                    <h1 className="text-3xl font-bold text-center p-10">Sign Up</h1>
+                    <input className = "text-black border border-black p-2" onChange = {e => {setName(e.target.value)}} placeholder = "Name" id = "name" required /> <br></br>
+                    <input className = "text-black border border-black p-2" onChange = {e => setEmail(e.target.value)} placeholder = "Email ID" id = "email" type = "email" required /> <br></br>
+                    <input className = "text-black border border-black p-2" onChange = {e => setUname(e.target.value)} placeholder = "User Name" id = "username" required /> <br></br>
+                    <input className = "text-black border border-black p-2" onChange = {e => setPass(e.target.value)} placeholder = "Password" id = "password" required /> <br></br>
+                    <button className = "border border-gray-100 p-2 hover:bg-gray-500" type="button"  onClick = {handleSubmit}>Submit!</button><br></br>
+                    </div>
+                    <div className="col-span-2"></div>
+        
                 </div>
-                <div className="col-span-2"></div>
-    
-            </div>
-
             </>
         );
       

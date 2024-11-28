@@ -16,6 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <div className='flex-grow-1 h-screen bg-gradient-to-r from-cyan-800 to-blue-800" text-white'>
       <HashRouter>
         <Routes>
+            <Route path="/" element={<Signin/>} />
             <Route path="/roomGen" element={<RoomGen />} />
             <Route path="/login" element={<Signin />} />
             <Route path="/signup" element={<Signup />} />
