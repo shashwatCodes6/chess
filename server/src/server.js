@@ -2,11 +2,11 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv'
 import cors from 'cors';
-import http from "http";
-import { Server } from "socket.io";
-import RoomManager from './controllers/RoomManager.controller.js';
 import { connectDB } from './db/connect.js';
 import { User }  from './db/user.model.js'
+import { RoomManager } from './controllers/RoomManager.controller.js'
+import { Server } from "socket.io";
+import http, { createServer } from 'http';
 
 
 
@@ -25,20 +25,18 @@ connectDB()
     console.log(`err connecting to db ${err}`)
   });
 
-  
 
-// const server = http.Server(app);
-// const io = new Server(server, {
-//   path: '',
-//   cors: {
-//     origin: process.env.CORS_ORIGIN,
-//     methods: ['GET', 'POST']
-//   },
-//   transports: ['websocket', 'polling']
-// });
+const server = http.Server(app);
+RoomManager.getInstance().io = new Server(server, {
+  path: '/socket.io',
+  cors: {
+    origin: process.env.CORS_ORIGIN,
+    methods: ['GET', 'POST']
+  },
+  transports: ['websocket', 'polling']
+});
 
-
-// io.on('connection', RoomManager);
+RoomManager.getInstance().io.on('connection', RoomManager.getInstance().handleRoomManager);
 
 
 app.post("/signup", async (req, res) => {
@@ -113,15 +111,16 @@ app.post("/verifyToken", (req, res)=>{
 app.post("/verifyRoomID", (req, res)=>{
   const roomID = req.body.roomID;
   // console.log("aaya", req.body, rmap[roomID]);
-  // if(rmap[roomID] === undefined){
-  //   return res.status(404).json({msg : "room not found"});
-  // }
-    return res.json({msg : "ok"});
+  if(RoomManager.getInstance().rmap[roomID] === undefined){
+    return res.status(404).json({msg : "room not found"});
+  }
+  
+  return res.json({msg : "ok"});
 
 });
 
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
