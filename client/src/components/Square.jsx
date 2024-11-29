@@ -30,7 +30,7 @@ function Square({ black, children, game, x, y }) {
       // },  
       drop: async (item, monitor) => {
         const clientOffset = monitor.getClientOffset();
-        const boardRef = document.getElementById('board'); // Replace 'board' with the id of your board element
+        const boardRef = document.getElementById('board'); 
         const boardRect = boardRef.getBoundingClientRect();
         const x = clientOffset.x - boardRect.left;
         const y = clientOffset.y - boardRect.top;

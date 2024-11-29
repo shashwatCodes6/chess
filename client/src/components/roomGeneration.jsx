@@ -54,7 +54,7 @@ function RoomGen() {
   
   return (
     <>
-    <Nav/>
+  
     <div className="grid grid-cols-3 m-10">
     <div className="col-span-1"></div>
     <div className="col-span-1 border border-black rounded-lg flex flex-col items-center justify-center" >

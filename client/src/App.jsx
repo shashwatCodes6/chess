@@ -1,22 +1,16 @@
 import React from 'react';
 import {useEffect, useState} from 'react'
-import Chessboard from './components/ChessBoard';
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { DndProvider } from 'react-dnd'
 import { Game } from './components/Game';
 import { useParams } from "react-router-dom";
 import { socket } from './socket/socket';
-import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom';
+import { REACT_APP_SERVER_URL } from './config'
+import Chessboard from './components/ChessBoard';
+import Cookies from 'js-cookie'
 import Timer from './components/Timer'
-import {REACT_APP_SERVER_URL} from './config'
-import Nav from './components/Nav';
 
-const containerStyle = {
-  width: 500,
-  height: 500,
-  border: '1px solid gray',
-}
 
 function App() {
   const roomID = useParams().roomID;  
@@ -34,7 +28,7 @@ function App() {
     if(!tokeninBrowser){
       navigate("/login");
     }
-    fetch("https://chess-3-y3v1.onrender.com/verifyToken", {
+    fetch(`${REACT_APP_SERVER_URL}/verifyToken`, {
       method : "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +60,7 @@ function App() {
       console.log(data);
         if(data.msg === "ok"){
           console.log("yay");
-        }else{
+        } else {
           socket.emit("leave-room", {roomID : roomID})
           alert(data.msg)
           navigate("/roomGen");
@@ -212,7 +206,6 @@ function App() {
   if(found === false){
     return (
       <>
-      <Nav></Nav>
       <div className="grid grid-cols-3">
         <div className="col-span-1"></div>
         <div className="col-span-1 flex flex-col items-center justify-center" >
@@ -235,7 +228,6 @@ function App() {
   }
   return (
     <>
-    <Nav/>
   <div className="md:p-10 m-10">
     <div className='grid sm:grid-cols-1 md:grid-cols-4'>
       <div className='grid-span-1 flex flex-col justify-between'>

@@ -67,7 +67,6 @@ const Signup = function(){
     }
         return (
             <>
-                <Nav/>
                 <div className="grid grid-cols-3">
                     <div className="col-span-1"></div>
                     <div className="col-span-1 flex flex-col items-center justify-center" >
